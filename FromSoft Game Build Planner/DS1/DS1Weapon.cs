@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FromSoft_Game_Build_Planner
 {
-    class DS1Weapon
+    public class DS1Weapon
     {
         public enum Type
         {
@@ -104,6 +104,7 @@ namespace FromSoft_Game_Build_Planner
         public Upgrade UpgradePath { get; set; }
 
         public Type WeaponType { get; set; }
+        public bool ShowID { get; private set; } = false;
 
         public DS1Weapon(PARAM.Row weaponParam)
         {
@@ -324,7 +325,10 @@ namespace FromSoft_Game_Build_Planner
 
         public override string ToString()
         {
-            return $"{ID} {Name}";
+            if (ShowID)
+                return $"{ID} {Name}";
+            else
+                return $"{Name}";
         }
     }
 }

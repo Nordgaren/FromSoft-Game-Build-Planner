@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="FromSoft_Game_Build_Planner.IntegerUpDown"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FromSoft_Game_Build_Planner"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="75">
+    <Grid  Height="23" Margin="0,0,0,0" VerticalAlignment="Top">
+        <TextBox x:Name="txtNum" x:FieldModifier="private" Text="0" TextChanged="txtNum_TextChanged" Margin="3,2,13,3" />
+        <Button x:Name="cmdUp" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▲" Width="10" Click="cmdUp_Click" Margin="33,2,1,13" />
+        <Button x:Name="cmdDown" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▼" Width="10" Click="cmdDown_Click" Margin="33,12,1,3" />
+    </Grid>
+
+</UserControl>

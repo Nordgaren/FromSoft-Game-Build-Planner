@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 using SoulsFormats;
 
 namespace FromSoft_Game_Build_Planner
@@ -23,12 +24,31 @@ namespace FromSoft_Game_Build_Planner
     /// </summary>
     public partial class DarkSouls1 : Window
     {
+        private string ExePath;
+
+        private int SoulLevel;
+
         public DarkSouls1()
         {
             InitializeComponent();
-            var path = @"F:\Dark Souls Mod Stuff\Remastest 1.4 Beta\DATA";
-            var vanillaPath = @"F:\Dark Souls Mod Stuff\Vanilla PTDE\DATA";
-            ReadParams(vanillaPath);
+#if DEBUG
+            ExePath = @"F:\Dark Souls Mod Stuff\Remastest 1.4 Beta\DATA";
+            //ExePath = @"F:\Dark Souls Mod Stuff\Vanilla PTDE\DATA";
+#else
+            var ofd = new OpenFileDialog();
+
+            var result = ofd.ShowDialog();
+
+            if (result.HasValue)
+            {
+                if (ofd.FileName.EndsWith("DARKSOULS.exe"))
+                    ExePath = System.IO.Path.GetDirectoryName(ofd.FileName);
+                else
+                    MessageBox.Show("No Dark Souls Detected");
+
+            }
+#endif
+            ReadParams(ExePath);
         }
 
         //PARAM EquipProParam;
@@ -49,22 +69,23 @@ namespace FromSoft_Game_Build_Planner
         List<DS1Armor> ArmorArms = new List<DS1Armor>();
         List<DS1Armor> ArmorLegs = new List<DS1Armor>();
         //Weapons
-        List<DS1Weapon> WeaponDagger = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponWhip = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponSword = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponRapier = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponCurved = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponAxe = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponBlunt = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponSpear = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponHalberd = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponSpellTool = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponFist = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponBow = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponCrossbow = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponShield = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponArrow = new List<DS1Weapon>();
-        List<DS1Weapon> WeaponBolt = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponDagger = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponWhip = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponSword = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponRapier = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponCurved = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponAxe = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponBlunt = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponSpear = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponHalberd = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponSpellTool = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponFist = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponBow = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponCrossbow = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponShield = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponArrow = new List<DS1Weapon>();
+        //List<DS1Weapon> WeaponBolt = new List<DS1Weapon>();
+        List<CategorizedItem> Weapons = new List<CategorizedItem>();
         //Spells
         List<DS1Spell> Sorceries = new List<DS1Spell>();
         List<DS1Spell> Miracles = new List<DS1Spell>();
@@ -141,27 +162,6 @@ namespace FromSoft_Game_Build_Planner
             //{
             //    Debug.Write($"{param.Def}\t");
             //}
-            WeaponDagger = WeaponDagger.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponWhip = WeaponWhip.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponSword = WeaponSword.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponRapier = WeaponRapier.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponCurved = WeaponCurved.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponAxe = WeaponAxe.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponBlunt = WeaponBlunt.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponSpear = WeaponSpear.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponHalberd = WeaponHalberd.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponSpellTool = WeaponSpellTool.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponFist = WeaponFist.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponBow = WeaponBow.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponCrossbow = WeaponCrossbow.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponShield = WeaponShield.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponArrow = WeaponArrow.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-            WeaponBolt = WeaponBolt.GroupBy(x => x.Name).Select(x => x.First()).ToList();
-
-            foreach (var weapon in WeaponDagger)
-            {
-                cbxWeapon.Items.Add(weapon);
-            }
 
             Console.ReadLine();
         }
@@ -206,6 +206,8 @@ namespace FromSoft_Game_Build_Planner
                     weaponNames.Add(item.ID, item.Text);
             }
 
+            
+
             //Debug.WriteLine($"Name\tMaterial\tReinforce");
             foreach (var weapon in equipWepParam.Rows)
             {
@@ -224,65 +226,71 @@ namespace FromSoft_Game_Build_Planner
 
                 var dsWeapon = new DS1Weapon(weapon);
 
-                //if (dsWeapon.UpgradePath == DS1Weapon.Upgrade.Infused)
-                //    continue;
+                if (dsWeapon.UpgradePath == DS1Weapon.Upgrade.Infused)
+                    continue;
 
                 switch (dsWeapon.WeaponType)
                 {
                     case DS1Weapon.Type.Dagger:
-                        WeaponDagger.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Dagger" });
                         break;
                     case DS1Weapon.Type.Sword:
-                            WeaponSword.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Sword" });
                         break;
                     case DS1Weapon.Type.Rapier:
-                        WeaponRapier.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Rapier" });
                         break;
                     case DS1Weapon.Type.Curved:
-                        WeaponCurved.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Curved Sword" });
                         break;
                     case DS1Weapon.Type.Axe:
-                        WeaponAxe.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Axe" });
                         break;
                     case DS1Weapon.Type.Blunt:
-                        WeaponBlunt.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Blunt" });
                         break;
                     case DS1Weapon.Type.Spear:
-                        WeaponSpear.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Spear" });
                         break;
                     case DS1Weapon.Type.Halberd:
-                        WeaponHalberd.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Halberd" });
                         break;
                     case DS1Weapon.Type.SpellTool:
                     case DS1Weapon.Type.PyroFlame:
                     case DS1Weapon.Type.PyroFlameAscended:
-                        WeaponSpellTool.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Spell Tool" });
                         break;
                     case DS1Weapon.Type.Fist:
-                        WeaponFist.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Fist" });
                         break;
                     case DS1Weapon.Type.Bow:
-                        WeaponBow.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Bow" });
                         break;
                     case DS1Weapon.Type.Crossbow:
-                        WeaponCrossbow.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Crossbow" });
                         break;
                     case DS1Weapon.Type.Shield:
-                        WeaponShield.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Shield" });
                         break;
                     case DS1Weapon.Type.Arrow:
-                        WeaponArrow.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Arrow" });
                         break;
                     case DS1Weapon.Type.Bolt:
-                        WeaponBolt.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Bolt" });
                         break;
                     case DS1Weapon.Type.Whip:
-                        WeaponWhip.Add(new DS1Weapon(weapon));
+                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Whip" });
                         break;
                     default:
                         break;
                 }
             }
+
+            Weapons = Weapons.GroupBy(x => x.Item.ToString()).Select(x => x.First()).ToList();
+            ListCollectionView lcv = new ListCollectionView(Weapons);
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+
+            cmbWeapon.ItemsSource = lcv;
         }
 
         private void SortItems(PARAM goodsParam)
@@ -433,56 +441,116 @@ namespace FromSoft_Game_Build_Planner
                         break;
                 }
             }
+
+            foreach (var dsClass in Classes)
+            {
+                cmbClass.Items.Add(dsClass);
+            }
+
+            cmbClass.SelectedIndex = 0;
         }
 
-        private void cbxWeapon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cmbWeapon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var weapon = cbxWeapon.SelectedItem as DS1Weapon;
+            var weapon = ((CategorizedItem)cmbWeapon.SelectedItem).Item as DS1Weapon;
 
             switch (weapon.UpgradePath)
             {
                 case DS1Weapon.Upgrade.None:
-                    cbxInfusion.IsEnabled = false;
-                    cbxInfusion.Items.Clear();
+                    cmbInfusion.IsEnabled = false;
+                    cmbInfusion.Items.Clear();
                     //nudUpgrade.IsEnabled = false;
                     //nudUpgrade.Maximum = 0;
                     break;
                 case DS1Weapon.Upgrade.Unique:
-                    cbxInfusion.IsEnabled = false;
-                    cbxInfusion.Items.Clear();
+                    cmbInfusion.IsEnabled = false;
+                    cmbInfusion.Items.Clear();
                     //nudUpgrade.Maximum = 5;
                     //nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.Infusable:
-                    cbxInfusion.Items.Clear();
+                    cmbInfusion.Items.Clear();
                     foreach (DS1Infusion infusion in DS1Infusion.All)
-                        cbxInfusion.Items.Add(infusion);
-                    cbxInfusion.SelectedIndex = 0;
-                    cbxInfusion.IsEnabled = true;
+                        cmbInfusion.Items.Add(infusion);
+                    cmbInfusion.SelectedIndex = 0;
+                    cmbInfusion.IsEnabled = true;
                     //nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.InfusableRestricted:
-                    cbxInfusion.Items.Clear();
+                    cmbInfusion.Items.Clear();
                     foreach (DS1Infusion infusion in DS1Infusion.All)
                         if (!infusion.Restricted)
-                            cbxInfusion.Items.Add(infusion);
-                    cbxInfusion.SelectedIndex = 0;
-                    cbxInfusion.IsEnabled = true;
+                            cmbInfusion.Items.Add(infusion);
+                    cmbInfusion.SelectedIndex = 0;
+                    cmbInfusion.IsEnabled = true;
                     //nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.PyroFlame:
-                    cbxInfusion.IsEnabled = false;
-                    cbxInfusion.Items.Clear();
+                    cmbInfusion.IsEnabled = false;
+                    cmbInfusion.Items.Clear();
                     //nudUpgrade.Maximum = 15;
                     //nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.PyroFlameAscended:
-                    cbxInfusion.IsEnabled = false;
-                    cbxInfusion.Items.Clear();
+                    cmbInfusion.IsEnabled = false;
+                    cmbInfusion.Items.Clear();
                     //nudUpgrade.Maximum = 5;
                     //nudUpgrade.IsEnabled = true;
                     break;
             }
+        }
+
+        private void cmbClass_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmbClass.SelectedIndex != -1)
+            {
+                var charClass = cmbClass.SelectedItem as DS1Class;
+                nudVit.MinValue = charClass.BaseVit;
+                nudAtt.MinValue = charClass.BaseAtt;
+                nudEnd.MinValue = charClass.BaseEnd;
+                nudStr.MinValue = charClass.BaseStr;
+                nudDex.MinValue = charClass.BaseDex;
+                nudRes.MinValue = charClass.BaseRes;
+                nudInt.MinValue = charClass.BaseInt;
+                nudFth.MinValue = charClass.BaseFai;
+            }
+        }
+
+        private void RecalculateStats()
+        {
+            var vitality = nudVit.NumValue;
+            var attunement = nudAtt.NumValue;
+            var endurance = nudEnd.NumValue;
+            var strength = nudStr.NumValue;
+            var dexterity = nudDex.NumValue;
+            var resistance = nudRes.NumValue;
+            var intelligence = nudInt.NumValue;
+            var faith = nudFth.NumValue;
+            var sl = CalculateSL(vitality, attunement, endurance, strength, dexterity, resistance, intelligence, faith);
+
+            txtSoulLevel.Text = sl.ToString();
+
+        }
+
+        private int CalculateSL(int vitality, int attunement, int endurance, int strength, int dexterity, int resistance, int intelligence, int faith)
+        {
+            var charClass = cmbClass.SelectedItem as DS1Class;
+            int sl = charClass.SoulLevel;
+            sl += vitality - charClass.BaseVit;
+            sl += attunement - charClass.BaseAtt;
+            sl += endurance - charClass.BaseEnd;
+            sl += strength - charClass.BaseStr;
+            sl += dexterity - charClass.BaseDex;
+            sl += resistance - charClass.BaseRes;
+            sl += intelligence - charClass.BaseInt;
+            sl += faith - charClass.BaseFai;
+            return sl;
+
+        }
+
+        private void nud_ValueChanged(object sender, EventArgs e)
+        {
+            RecalculateStats();
         }
     }
 }

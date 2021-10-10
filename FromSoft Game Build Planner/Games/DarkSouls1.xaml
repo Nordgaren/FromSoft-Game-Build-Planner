@@ -6,9 +6,43 @@
         xmlns:local="clr-namespace:FromSoft_Game_Build_Planner"
         mc:Ignorable="d"
         Title="Dark Souls" Height="450" Width="800">
-    <Grid>
-        <ComboBox x:Name="cbxWeapon" HorizontalAlignment="Left" Margin="255,278,0,0" VerticalAlignment="Top" Width="240" SelectionChanged="cbxWeapon_SelectionChanged"/>
-        <ComboBox x:Name="cbxInfusion" HorizontalAlignment="Left" Margin="255,241,0,0" VerticalAlignment="Top" Width="240"/>
 
+    <Grid>
+        <ComboBox x:Name="cmbWeapon" HorizontalAlignment="Center" Margin="0,353,0,0" VerticalAlignment="Top" Width="240" SelectionChanged="cmbWeapon_SelectionChanged">
+            <ComboBox.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ComboBox.GroupStyle>
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Item}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ComboBox x:Name="cmbInfusion" HorizontalAlignment="Center" Margin="0,316,0,0" VerticalAlignment="Top" Width="240"/>
+        <local:IntegerUpDown x:Name="nudVit" Margin="120,104,605,286" ValueChanged="nud_ValueChanged"/>
+        <local:IntegerUpDown x:Name="nudAtt" Margin="120,126,605,264" ValueChanged="nud_ValueChanged"/>
+        <local:IntegerUpDown x:Name="nudEnd" Margin="120,148,605,242" ValueChanged="nud_ValueChanged"/>
+        <local:IntegerUpDown x:Name="nudStr" Margin="120,170,605,220" ValueChanged="nud_ValueChanged"/>
+        <local:IntegerUpDown x:Name="nudDex" Margin="120,192,605,198" ValueChanged="nud_ValueChanged"/>
+        <local:IntegerUpDown x:Name="nudRes" Margin="120,214,605,176" ValueChanged="nud_ValueChanged"/>
+        <local:IntegerUpDown x:Name="nudInt" Margin="120,236,605,154" ValueChanged="nud_ValueChanged"/>
+        <local:IntegerUpDown x:Name="nudFth" Margin="120,258,605,132" ValueChanged="nud_ValueChanged"/>
+        <Label x:Name="lblVit" Content="Vitality" HorizontalAlignment="Left" Margin="187,104,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblAtt" Content="Attunement" HorizontalAlignment="Left" Margin="186,126,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblEnd" Content="Endurance" HorizontalAlignment="Left" Margin="186,148,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblStr" Content="Strength" HorizontalAlignment="Left" Margin="186,170,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblDex" Content="Dexterity" HorizontalAlignment="Left" Margin="186,192,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblRes" Content="Resistance" HorizontalAlignment="Left" Margin="186,214,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblInt" Content="Intelligence" HorizontalAlignment="Left" Margin="187,236,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblFai" Content="Faith" HorizontalAlignment="Left" Margin="187,258,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtSoulLevel" HorizontalAlignment="Left" Margin="123,86,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="46" IsEnabled="False"/>
+        <Label x:Name="lblSL" Content="Soul Level" HorizontalAlignment="Left" Margin="186,85,0,0" VerticalAlignment="Top" IsTabStop="True"/>
+        <ComboBox x:Name="cmbClass" HorizontalAlignment="Left" Margin="123,58,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="cmbClass_SelectionChanged"/>
     </Grid>
 </Window>
