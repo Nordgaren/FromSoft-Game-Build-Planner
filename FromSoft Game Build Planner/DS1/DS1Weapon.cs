@@ -194,6 +194,7 @@ namespace FromSoft_Game_Build_Planner
                 {
                     case 0:
                     case 5000:
+                    case 6000:
                         UpgradePath = Upgrade.InfusableRestricted;
                         break;
                     case 1000:
@@ -206,6 +207,7 @@ namespace FromSoft_Game_Build_Planner
                             UpgradePath = Upgrade.Unique;
                         break;
                     default:
+                        UpgradePath = Upgrade.Infused;
                         break;
                 }
                 return;

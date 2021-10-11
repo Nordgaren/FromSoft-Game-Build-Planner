@@ -17,7 +17,7 @@ namespace FromSoft_Game_Build_Planner
         public float FireMutliplier { get; set; }
         public float LightningMutliplier { get; set; }
 
-        public float StaminaUsage { get; set; }
+        public float StaminaDamage { get; set; }
 
         public float StrMultiplier { get; set; }
         public float DexMultiplier { get; set; }
@@ -34,7 +34,7 @@ namespace FromSoft_Game_Build_Planner
             FireMutliplier = (float)weapReinforceParam.Cells[2].Value;
             LightningMutliplier = (float)weapReinforceParam.Cells[3].Value;
 
-            StaminaUsage = (float)weapReinforceParam.Cells[4].Value;
+            StaminaDamage = (float)weapReinforceParam.Cells[4].Value;
 
             StrMultiplier = (float)weapReinforceParam.Cells[7].Value;
             DexMultiplier = (float)weapReinforceParam.Cells[8].Value;

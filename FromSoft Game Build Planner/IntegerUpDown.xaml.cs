@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,7 +23,7 @@ namespace FromSoft_Game_Build_Planner
     {
         private int _numValue = 0;
 
-        public int NumValue
+        public int Value
         {
             get { return _numValue; }
             set
@@ -45,7 +46,7 @@ namespace FromSoft_Game_Build_Planner
         public int MaxValue
         {
             get { return _maxValue; }
-            set { _maxValue = value; }
+            set { _maxValue = value; txtNum_TextChanged(null, null); }
         }
 
 
@@ -53,16 +54,28 @@ namespace FromSoft_Game_Build_Planner
         {
             InitializeComponent();
             txtNum.Text = _numValue.ToString();
+            Timer.Interval = 500;
+            Timer.AutoReset = false;
+            Timer.Elapsed += Timer_Elapsed;
+        }
+
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                UpdateValue();
+
+            });
         }
 
         private void cmdUp_Click(object sender, RoutedEventArgs e)
         {
-            NumValue++;
+            Value++;
         }
 
         private void cmdDown_Click(object sender, RoutedEventArgs e)
         {
-            NumValue--;
+            Value--;
         }
 
         public event EventHandler ValueChanged;
@@ -72,16 +85,49 @@ namespace FromSoft_Game_Build_Planner
             ValueChanged?.Invoke(this, e);
         }
 
+        System.Timers.Timer Timer = new System.Timers.Timer();
+
         private void txtNum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            //if (sender != null && ((Control)sender).IsFocused)
+            //{
+            //    Timer.Start();
+            //    return;
+            //}
+            if (sender != null && ((Control)sender).IsFocused)
+                return;
+
+            UpdateValue();
+        }
+
+        private void txtNum_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateValue();
+        }
+
+        private void UpdateValue()
         {
             int number = 0;
             if (txtNum.Text != "")
-                if (!int.TryParse(txtNum.Text, out number)) txtNum.Text = _numValue.ToString();
-            if (number > _maxValue) NumValue = _maxValue;
-            if (number < _minValue) NumValue = _minValue;
-            txtNum.SelectionStart = txtNum.Text.Length;
-            OnValueChanged(EventArgs.Empty);
-        }
+            {
+                if (!int.TryParse(txtNum.Text, out number))
+                {
+                    txtNum.Text = _numValue.ToString();
+                    return;
+                }
+                if (number > _maxValue) { _numValue = _maxValue; txtNum.Text = _numValue.ToString(); OnValueChanged(EventArgs.Empty); return; }
+                if (number < _minValue) { _numValue = _minValue; txtNum.Text = _numValue.ToString(); OnValueChanged(EventArgs.Empty); return; }
+                var lastNum = _numValue;
+                _numValue = number;
 
+                if (lastNum != _numValue)
+                {
+                    txtNum.Text = _numValue.ToString();
+                    OnValueChanged(EventArgs.Empty);
+                }
+
+            }
+        }
     }
 }

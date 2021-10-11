@@ -85,7 +85,8 @@ namespace FromSoft_Game_Build_Planner
         //List<DS1Weapon> WeaponShield = new List<DS1Weapon>();
         //List<DS1Weapon> WeaponArrow = new List<DS1Weapon>();
         //List<DS1Weapon> WeaponBolt = new List<DS1Weapon>();
-        List<CategorizedItem> Weapons = new List<CategorizedItem>();
+        List<CategorizedItem> WeaponsList = new List<CategorizedItem>();
+        Dictionary<int, DS1Weapon> Weapons = new Dictionary<int, DS1Weapon>();
         //Spells
         List<DS1Spell> Sorceries = new List<DS1Spell>();
         List<DS1Spell> Miracles = new List<DS1Spell>();
@@ -100,6 +101,7 @@ namespace FromSoft_Game_Build_Planner
         //Weapon Upgrades
         Dictionary<int, DS1WeaponUpgrade> WeaponUpgrades;
         Dictionary<int, DS1ArmorUpgrade> ArmorUpgrades;
+        Dictionary<int, DS1CalcCorrect> CalcCorrectGraph;
 
         private void ReadParams(string exePath)
         {
@@ -146,24 +148,42 @@ namespace FromSoft_Game_Build_Planner
             {
                 switch (param.ParamType)
                 {
-                    case "EQUIP_PARAM_PROTECTOR_ST": { SortArmors(param); break; }
-                    case "EQUIP_PARAM_WEAPON_ST": { SortWeapons(param); break; }
-                    case "EQUIP_PARAM_GOODS_ST": { SortItems(param); break; }
-                    case "MAGIC_PARAM_ST": { SortSpells(param); break; }
-                    case "EQUIP_PARAM_ACCESSORY_ST": { SortRings(param); break; }
-                    case "CHARACTER_INIT_PARAM": { SortClasses(param); break; }
-                    case "REINFORCE_PARAM_WEAPON_ST": { WeaponUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1WeaponUpgrade(x)); break; }
-                    case "REINFORCE_PARAM_PROTECTOR_ST": { ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ; break; }
+                    case "EQUIP_PARAM_PROTECTOR_ST":  
+                        SortArmors(param); 
+                        break; 
+                    case "EQUIP_PARAM_WEAPON_ST":  
+                        SortWeapons(param); 
+                        break; 
+                    case "EQUIP_PARAM_GOODS_ST":  
+                        SortItems(param); 
+                        break; 
+                    case "MAGIC_PARAM_ST":  
+                        SortSpells(param); 
+                        break; 
+                    case "EQUIP_PARAM_ACCESSORY_ST":  
+                        SortRings(param); 
+                        break; 
+                    case "CHARACTER_INIT_PARAM":  
+                        SortClasses(param); 
+                        break; 
+                    case "REINFORCE_PARAM_WEAPON_ST":  
+                        WeaponUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1WeaponUpgrade(x));
+                        break; 
+                    case "REINFORCE_PARAM_PROTECTOR_ST": 
+                        ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ;
+                        break; 
+                    case "CACL_CORRECT_GRAPH_ST":  
+                        CalcCorrectGraph = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1CalcCorrect(x));
+                        break; 
                 }
             }
 
+            CalculatAR();
             //Debug.Write("Name\tID\t");
             //foreach (var param in DebugParam.Rows[0].Cells)
             //{
             //    Debug.Write($"{param.Def}\t");
             //}
-
-            Console.ReadLine();
         }
 
         PARAM DebugParam;
@@ -188,10 +208,14 @@ namespace FromSoft_Game_Build_Planner
                 if (string.IsNullOrWhiteSpace(armor.Name))
                     continue;
 
-                if ((byte)armor.Cells[74].Value == 0x1) { ArmorHead.Add(new DS1Armor(armor, DS1Armor.Slot.Head)); }
-                else if ((byte)armor.Cells[75].Value == 0x1) { ArmorBody.Add(new DS1Armor(armor, DS1Armor.Slot.Body)); }
-                else if ((byte)armor.Cells[76].Value == 0x1) { ArmorArms.Add(new DS1Armor(armor, DS1Armor.Slot.Arms)); }
-                else if ((byte)armor.Cells[77].Value == 0x1) { ArmorLegs.Add(new DS1Armor(armor, DS1Armor.Slot.Legs)); }
+                if ((byte)armor.Cells[74].Value == 0x1)
+                    ArmorHead.Add(new DS1Armor(armor, DS1Armor.Slot.Head));
+                else if ((byte)armor.Cells[75].Value == 0x1)
+                    ArmorBody.Add(new DS1Armor(armor, DS1Armor.Slot.Body));
+                else if ((byte)armor.Cells[76].Value == 0x1)
+                    ArmorArms.Add(new DS1Armor(armor, DS1Armor.Slot.Arms));
+                else if ((byte)armor.Cells[77].Value == 0x1)
+                    ArmorLegs.Add(new DS1Armor(armor, DS1Armor.Slot.Legs));
             }
         }
 
@@ -221,10 +245,12 @@ namespace FromSoft_Game_Build_Planner
                 if (string.IsNullOrWhiteSpace(weapon.Name))
                     continue;
 
-                if (weapon.Name.Contains("+"))
-                    continue;
-
                 var dsWeapon = new DS1Weapon(weapon);
+
+                Weapons.Add(dsWeapon.ID, dsWeapon);
+
+                if (dsWeapon.Name.Contains("+"))
+                    continue;
 
                 if (dsWeapon.UpgradePath == DS1Weapon.Upgrade.Infused)
                     continue;
@@ -232,62 +258,62 @@ namespace FromSoft_Game_Build_Planner
                 switch (dsWeapon.WeaponType)
                 {
                     case DS1Weapon.Type.Dagger:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Dagger" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Dagger" });
                         break;
                     case DS1Weapon.Type.Sword:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Sword" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Sword" });
                         break;
                     case DS1Weapon.Type.Rapier:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Rapier" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, Category = "Rapier" });
                         break;
                     case DS1Weapon.Type.Curved:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Curved Sword" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Curved Sword" });
                         break;
                     case DS1Weapon.Type.Axe:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Axe" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Axe" });
                         break;
                     case DS1Weapon.Type.Blunt:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Blunt" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Blunt" });
                         break;
                     case DS1Weapon.Type.Spear:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Spear" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Spear" });
                         break;
                     case DS1Weapon.Type.Halberd:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Halberd" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Halberd" });
                         break;
                     case DS1Weapon.Type.SpellTool:
                     case DS1Weapon.Type.PyroFlame:
                     case DS1Weapon.Type.PyroFlameAscended:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Spell Tool" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Spell Tool" });
                         break;
                     case DS1Weapon.Type.Fist:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Fist" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Fist" });
                         break;
                     case DS1Weapon.Type.Bow:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Bow" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Bow" });
                         break;
                     case DS1Weapon.Type.Crossbow:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Crossbow" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Crossbow" });
                         break;
                     case DS1Weapon.Type.Shield:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Shield" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Shield" });
                         break;
                     case DS1Weapon.Type.Arrow:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Arrow" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Arrow" });
                         break;
                     case DS1Weapon.Type.Bolt:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Bolt" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Bolt" });
                         break;
                     case DS1Weapon.Type.Whip:
-                        Weapons.Add(new CategorizedItem() { Item = dsWeapon, Category = "Whip" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Whip" });
                         break;
                     default:
                         break;
                 }
             }
 
-            Weapons = Weapons.GroupBy(x => x.Item.ToString()).Select(x => x.First()).ToList();
-            ListCollectionView lcv = new ListCollectionView(Weapons);
+            WeaponsList = WeaponsList.GroupBy(x => x.Name).Select(x => x.First()).ToList();
+            ListCollectionView lcv = new ListCollectionView(WeaponsList);
             lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
 
             cmbWeapon.ItemsSource = lcv;
@@ -452,21 +478,21 @@ namespace FromSoft_Game_Build_Planner
 
         private void cmbWeapon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var weapon = ((CategorizedItem)cmbWeapon.SelectedItem).Item as DS1Weapon;
+            var weapon = Weapons[((CategorizedItem)cmbWeapon.SelectedItem).ID];
 
             switch (weapon.UpgradePath)
             {
                 case DS1Weapon.Upgrade.None:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
-                    //nudUpgrade.IsEnabled = false;
-                    //nudUpgrade.Maximum = 0;
+                    nudUpgrade.IsEnabled = false;
+                    nudUpgrade.MaxValue = 0;
                     break;
                 case DS1Weapon.Upgrade.Unique:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
-                    //nudUpgrade.Maximum = 5;
-                    //nudUpgrade.IsEnabled = true;
+                    nudUpgrade.MaxValue = 5;
+                    nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.Infusable:
                     cmbInfusion.Items.Clear();
@@ -474,7 +500,7 @@ namespace FromSoft_Game_Build_Planner
                         cmbInfusion.Items.Add(infusion);
                     cmbInfusion.SelectedIndex = 0;
                     cmbInfusion.IsEnabled = true;
-                    //nudUpgrade.IsEnabled = true;
+                    nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.InfusableRestricted:
                     cmbInfusion.Items.Clear();
@@ -483,21 +509,89 @@ namespace FromSoft_Game_Build_Planner
                             cmbInfusion.Items.Add(infusion);
                     cmbInfusion.SelectedIndex = 0;
                     cmbInfusion.IsEnabled = true;
-                    //nudUpgrade.IsEnabled = true;
+                    nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.PyroFlame:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
-                    //nudUpgrade.Maximum = 15;
-                    //nudUpgrade.IsEnabled = true;
+                    nudUpgrade.MaxValue = 15;
+                    nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.PyroFlameAscended:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
-                    //nudUpgrade.Maximum = 5;
-                    //nudUpgrade.IsEnabled = true;
+                    nudUpgrade.MaxValue = 5;
+                    nudUpgrade.IsEnabled = true;
                     break;
             }
+
+            CalculatAR();
+        }
+
+        private void CalculatAR()
+        {
+            var infusion = cmbInfusion.SelectedItem as DS1Infusion;
+
+            var infusionID = 000;
+
+            if (infusion != null)
+                infusionID = infusion.Value;
+
+            var ds1Weapon = Weapons[((CategorizedItem)cmbWeapon.SelectedItem).ID + infusionID];
+
+            if (ds1Weapon.WeaponType == DS1Weapon.Type.PyroFlame || ds1Weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+                ds1Weapon = Weapons[ds1Weapon.ID + (nudUpgrade.Value * 100)];
+
+            var reqList = new List<Tuple<int, int>>();
+
+            var statsRequired = (nudStr.Value >= ds1Weapon.StrRequired) && (nudDex.Value >= ds1Weapon.DexRequired) && 
+                (nudInt.Value >= ds1Weapon.IntRequired) && (nudFai.Value >= ds1Weapon.FaiRequired);
+
+
+            if (statsRequired)
+            {
+                var Stat = 0;
+                var StatRequired = 0;
+                var Multiplier = WeaponUpgrades[infusionID + nudUpgrade.Value];
+                var weaponAttack = ds1Weapon.PhysicalAttack * Multiplier.PhysicalMutliplier;
+                var strScaling = ds1Weapon.StrScaling * Multiplier.StrMultiplier;
+                var dexScaling = ds1Weapon.DexScaling * Multiplier.DexMultiplier;
+
+                var ARBoost = 0f;
+
+                /*
+                 * ARBoost=(BaseAttack*(StatCorrect/100)*(stgMaxValGrow/100)-BaseAttack*(StatCorrect/100)*(stgMaxValGrowBelow/100))/(stgMaxVal-stgMaxValBelow)+(BaseAttack*(StatCorrect/100)*(stgMaxValGrowBelow/100))
+                 */
+
+                var ScalingFactor = weaponAttack * (ds1Weapon.StrScaling / ds1Weapon.DexScaling);
+
+                var StatTypeDmg = 0f;
+
+                if (Stat >= StatRequired)
+                {
+                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal0 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1)
+                    {
+                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow1 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow0 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal0) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal0) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow0 / 100);
+                    }
+                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2)
+                    {
+                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow2 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow1 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow1 / 100);
+                    }
+                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3)
+                    {
+                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow3 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow2 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow2 / 100);
+                    }
+                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal4)
+                    {
+                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow4 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow3 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal4 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow3 / 100);
+                    }
+
+                    txtAR.Text = "Usable";
+                }
+                
+            }
+            else
+                txtAR.Text = "Unusable";
         }
 
         private void cmbClass_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -512,20 +606,20 @@ namespace FromSoft_Game_Build_Planner
                 nudDex.MinValue = charClass.BaseDex;
                 nudRes.MinValue = charClass.BaseRes;
                 nudInt.MinValue = charClass.BaseInt;
-                nudFth.MinValue = charClass.BaseFai;
+                nudFai.MinValue = charClass.BaseFai;
             }
         }
 
         private void RecalculateStats()
         {
-            var vitality = nudVit.NumValue;
-            var attunement = nudAtt.NumValue;
-            var endurance = nudEnd.NumValue;
-            var strength = nudStr.NumValue;
-            var dexterity = nudDex.NumValue;
-            var resistance = nudRes.NumValue;
-            var intelligence = nudInt.NumValue;
-            var faith = nudFth.NumValue;
+            var vitality = nudVit.Value;
+            var attunement = nudAtt.Value;
+            var endurance = nudEnd.Value;
+            var strength = nudStr.Value;
+            var dexterity = nudDex.Value;
+            var resistance = nudRes.Value;
+            var intelligence = nudInt.Value;
+            var faith = nudFai.Value;
             var sl = CalculateSL(vitality, attunement, endurance, strength, dexterity, resistance, intelligence, faith);
 
             txtSoulLevel.Text = sl.ToString();
@@ -535,6 +629,10 @@ namespace FromSoft_Game_Build_Planner
         private int CalculateSL(int vitality, int attunement, int endurance, int strength, int dexterity, int resistance, int intelligence, int faith)
         {
             var charClass = cmbClass.SelectedItem as DS1Class;
+
+            if (charClass == null)
+                return 0;
+
             int sl = charClass.SoulLevel;
             sl += vitality - charClass.BaseVit;
             sl += attunement - charClass.BaseAtt;
@@ -551,6 +649,25 @@ namespace FromSoft_Game_Build_Planner
         private void nud_ValueChanged(object sender, EventArgs e)
         {
             RecalculateStats();
+
+            if (CalcCorrectGraph != null)
+                CalculatAR();
+
         }
+
+        private void cmbInfusion_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DS1Infusion infusion = cmbInfusion.SelectedItem as DS1Infusion;
+
+            if (infusion == null)
+                return;
+
+            nudUpgrade.MaxValue = infusion.MaxUpgrade;
+
+            CalculatAR();
+            //Checks if maxUpgrade is checked and sets the value to max value
+        }
+
+
     }
 }

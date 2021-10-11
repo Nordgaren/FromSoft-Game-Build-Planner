@@ -7,9 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="75">
     <Grid  Height="23" Margin="0,0,0,0" VerticalAlignment="Top">
-        <TextBox x:Name="txtNum" x:FieldModifier="private" Text="0" TextChanged="txtNum_TextChanged" Margin="3,2,13,3" />
-        <Button x:Name="cmdUp" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▲" Width="10" Click="cmdUp_Click" Margin="33,2,1,13" />
-        <Button x:Name="cmdDown" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▼" Width="10" Click="cmdDown_Click" Margin="33,12,1,3" />
+        <TextBox x:Name="txtNum" x:FieldModifier="private" Text="0" TextChanged="txtNum_TextChanged" Margin="3,2,13,3" LostFocus="txtNum_LostFocus" />
+        <Button x:Name="cmdUp" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▲" Width="10" Click="cmdUp_Click" Margin="33,2,1,13" TabIndex="-1" />
+        <Button x:Name="cmdDown" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▼" Width="10" Click="cmdDown_Click" Margin="33,12,1,3" TabIndex="-1" />
     </Grid>
 
 </UserControl>
