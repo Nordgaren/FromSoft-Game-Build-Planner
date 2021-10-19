@@ -688,32 +688,32 @@ namespace FromSoft_Game_Build_Planner
             return 0;
         }
 
-        private double GetHumanityDamage(float statTypeDmg1, float statTypeDmg2, float typeAttack)
+        private float GetHumanityDamage(float statTypeDmg1, float statTypeDmg2, float typeAttack)
         {
             switch (nudHumanity.Value)
             {
                 case 0:
                     return 0;
                 case 1:
-                    return (typeAttack * 0.05) + (statTypeDmg1 * 0.05) + (statTypeDmg2 * 0.05);
+                    return (typeAttack * 0.05f) + (statTypeDmg1 * 0.05f) + (statTypeDmg2 * 0.05f);
                 case 2:
-                    return (typeAttack * 0.075) + (statTypeDmg1 * 0.075) + (statTypeDmg2 * 0.075);
+                    return (typeAttack * 0.075f) + (statTypeDmg1 * 0.075f) + (statTypeDmg2 * 0.075f);
                 case 3:
-                    return (typeAttack * 0.1) + (statTypeDmg1 * 0.1) + (statTypeDmg2 * 0.1);
+                    return (typeAttack * 0.1f) + (statTypeDmg1 * 0.1f) + (statTypeDmg2 * 0.1f);
                 case 4:
-                    return (typeAttack * 0.1157) + (statTypeDmg1 * 0.1157) + (statTypeDmg2 * 0.1157);
+                    return (typeAttack * 0.1157f) + (statTypeDmg1 * 0.1157f) + (statTypeDmg2 * 0.1157f);
                 case 5:
-                    return (typeAttack * 0.1314) + (statTypeDmg1 * 0.1314) + (statTypeDmg2 * 0.1314);
+                    return (typeAttack * 0.1314f) + (statTypeDmg1 * 0.1314f) + (statTypeDmg2 * 0.1314f);
                 case 6:
-                    return (typeAttack * 0.1471) + (statTypeDmg1 * 0.1471) + (statTypeDmg2 * 0.1471);
+                    return (typeAttack * 0.1471f) + (statTypeDmg1 * 0.1471f) + (statTypeDmg2 * 0.1471f);
                 case 7:
-                    return (typeAttack * 0.1628) + (statTypeDmg1 * 0.1628) + (statTypeDmg2 * 0.1628);
+                    return (typeAttack * 0.1628f) + (statTypeDmg1 * 0.1628f) + (statTypeDmg2 * 0.1628f);
                 case 8:
-                    return (typeAttack * 0.1758) + (statTypeDmg1 * 0.1758) + (statTypeDmg2 * 0.1758);
+                    return (typeAttack * 0.1758f) + (statTypeDmg1 * 0.1758f) + (statTypeDmg2 * 0.1758f);
                 case 9:
-                    return (typeAttack * 0.1942) + (statTypeDmg1 * 0.1942) + (statTypeDmg2 * 0.1942);
+                    return (typeAttack * 0.1942f) + (statTypeDmg1 * 0.1942f) + (statTypeDmg2 * 0.1942f);
                 default:
-                    return (typeAttack * 0.21) + (statTypeDmg1 * 0.21) + (statTypeDmg2 * 0.21);
+                    return (typeAttack * 0.21f) + (statTypeDmg1 * 0.21f) + (statTypeDmg2 * 0.21f);
             }
         }
 
@@ -773,7 +773,7 @@ namespace FromSoft_Game_Build_Planner
         {
             RecalculateStats();
 
-            if (CalcCorrectGraph != null)
+            if (NotLoading)
                 CalculatAR();
 
         }
@@ -788,7 +788,6 @@ namespace FromSoft_Game_Build_Planner
             nudUpgrade.MaxValue = infusion.MaxUpgrade;
 
             CalculatAR();
-            //Checks if maxUpgrade is checked and sets the value to max value
         }
 
 
