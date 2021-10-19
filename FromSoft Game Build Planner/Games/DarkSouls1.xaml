@@ -43,9 +43,19 @@
         <Label x:Name="lblFai" Content="Faith" HorizontalAlignment="Left" Margin="652,257,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtSoulLevel" HorizontalAlignment="Left" Margin="722,86,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="46" IsEnabled="False"/>
         <Label x:Name="lblSL" Content="Soul Level" HorizontalAlignment="Left" Margin="651,83,0,0" VerticalAlignment="Top" IsTabStop="True"/>
-        <ComboBox x:Name="cmbClass" HorizontalAlignment="Left" Margin="656,58,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="cmbClass_SelectionChanged"/>
+        <ComboBox x:Name="cmbClass" HorizontalAlignment="Left" Margin="656,58,0,0" VerticalAlignment="Top" Width="126" SelectionChanged="cmbClass_SelectionChanged"/>
         <local:IntegerUpDown x:Name="nudUpgrade" Margin="106,64,621,326" ValueChanged="nud_ValueChanged"/>
-        <TextBox x:Name="txtAR" HorizontalAlignment="Left" Margin="316,75,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
-        <Label Content="AR" HorizontalAlignment="Left" Margin="375,70,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtPysAR" HorizontalAlignment="Left" Margin="316,75,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+        <Label x:Name="lblPhysAR" Content="Phys AR" HorizontalAlignment="Left" Margin="375,70,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtMagAR" HorizontalAlignment="Left" Margin="316,101,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+        <Label x:Name="lblMagAR" Content="Mag AR" HorizontalAlignment="Left" Margin="375,96,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtFireAR" HorizontalAlignment="Left" Margin="316,127,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+        <Label x:Name="lblMagAR_Copy" Content="Fire AR" HorizontalAlignment="Left" Margin="375,122,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtLightAR" HorizontalAlignment="Left" Margin="316,153,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+        <Label x:Name="lblLightAR" Content="Lightning AR" HorizontalAlignment="Left" Margin="375,148,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtTotalAR" HorizontalAlignment="Left" Margin="316,48,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="54"/>
+        <Label x:Name="lblTotalAR" Content="Total AR" HorizontalAlignment="Left" Margin="375,45,0,0" VerticalAlignment="Top"/>
+        <local:IntegerUpDown x:Name="nudHumanity" Margin="719,31,6,359" ValueChanged="nud_ValueChanged" TabIndex="1"/>
+        <Label x:Name="lblHumanity" Content="Humanity" HorizontalAlignment="Left" Margin="652,30,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

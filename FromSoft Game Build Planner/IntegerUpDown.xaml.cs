@@ -71,11 +71,13 @@ namespace FromSoft_Game_Build_Planner
         private void cmdUp_Click(object sender, RoutedEventArgs e)
         {
             Value++;
+            OnValueChanged(EventArgs.Empty);
         }
 
         private void cmdDown_Click(object sender, RoutedEventArgs e)
         {
             Value--;
+            OnValueChanged(EventArgs.Empty);
         }
 
         public event EventHandler ValueChanged;

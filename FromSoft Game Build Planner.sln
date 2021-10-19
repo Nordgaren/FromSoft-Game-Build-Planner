@@ -3,24 +3,34 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FromSoft Game Build Planner", "FromSoft Game Build Planner\FromSoft Game Build Planner.csproj", "{8084B542-AE78-43CE-93D2-55AC1498CA8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FromSoft Game Build Planner", "FromSoft Game Build Planner\FromSoft Game Build Planner.csproj", "{8084B542-AE78-43CE-93D2-55AC1498CA8E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoulsFormats", "..\SoulsFormats\SoulsFormats\SoulsFormats.csproj", "{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Debug|x64.Build.0 = Debug|Any CPU
 		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Release|x64.ActiveCfg = Release|Any CPU
+		{8084B542-AE78-43CE-93D2-55AC1498CA8E}.Release|x64.Build.0 = Release|Any CPU
 		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Debug|x64.Build.0 = Debug|Any CPU
 		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Release|x64.ActiveCfg = Release|Any CPU
+		{3E51FD1E-03FF-4578-A3BC-5B1BF12BFB56}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

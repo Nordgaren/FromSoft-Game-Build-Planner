@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using SF_Compatible_DRB_Icon_Appender;
 using SoulsFormats;
 
 namespace FromSoft_Game_Build_Planner
@@ -34,6 +35,8 @@ namespace FromSoft_Game_Build_Planner
 #if DEBUG
             ExePath = @"F:\Dark Souls Mod Stuff\Remastest 1.4 Beta\DATA";
             //ExePath = @"F:\Dark Souls Mod Stuff\Vanilla PTDE\DATA";
+
+
 #else
             var ofd = new OpenFileDialog();
 
@@ -47,6 +50,7 @@ namespace FromSoft_Game_Build_Planner
                     MessageBox.Show("No Dark Souls Detected");
 
             }
+            
 #endif
             ReadParams(ExePath);
         }
@@ -102,6 +106,7 @@ namespace FromSoft_Game_Build_Planner
         Dictionary<int, DS1WeaponUpgrade> WeaponUpgrades;
         Dictionary<int, DS1ArmorUpgrade> ArmorUpgrades;
         Dictionary<int, DS1CalcCorrect> CalcCorrectGraph;
+        Dictionary<string, TPF> Textures;
 
         private void ReadParams(string exePath)
         {
@@ -177,13 +182,70 @@ namespace FromSoft_Game_Build_Planner
                         break; 
                 }
             }
+            
 
-            CalculatAR();
+            //var drbFile = $@"{ExePath}\menu\menu.drb";
+            //var tpfFile = $@"{ExePath}\menu\menu.tpf";
+            //var tpfTexFile0 = $@"{ExePath}\menu\menu_0.tpf";
+            //var tpfTexFile1 = $@"{ExePath}\menu\menu_1.tpf";
+            //var tpfTexFile2 = $@"{ExePath}\menu\menu_2.tpf";
+            //var tpfTexFile3 = $@"{ExePath}\menu\menu_3.tpf";
+            //var tpfTexFile4 = $@"{ExePath}\menu\menu_4.tpf";
+            //var tpfTexFile5 = $@"{ExePath}\menu\menu_5.tpf";
+            //var drb = DRBRaw.Read(File.ReadAllBytes(drbFile));
+            //var tpf = TPF.Read(tpfFile);
+            //List<TPF> tpfs = new List<TPF>() 
+            //{
+            //TPF.Read(tpfTexFile0),
+            //TPF.Read(tpfTexFile1),
+            //TPF.Read(tpfTexFile2),
+            //TPF.Read(tpfTexFile3),
+            //TPF.Read(tpfTexFile4),
+            //TPF.Read(tpfTexFile5)
+            //};
+
+            //DRBRaw.DLGEntry iconOld;
+
+            //foreach (var dlgo in drb.dlg.Entries)
+            //{
+            //    if (dlgo.Name == "Icon")
+            //    {
+            //        iconOld = dlgo;
+            //        break;
+            //    }
+            //}
+
+            //ReadDRB(tpf, drb);
             //Debug.Write("Name\tID\t");
             //foreach (var param in DebugParam.Rows[0].Cells)
             //{
             //    Debug.Write($"{param.Def}\t");
             //}
+            NotLoading = true;
+            CalculatAR();
+        }
+
+        DRBRaw DRB;
+        List<SpriteShape> Shapes;
+        bool Remastered = false;
+        
+
+        public void ReadDRB(TPF menuTPF, DRBRaw menuDRB)
+        {
+            var textures = new List<string>();
+            foreach (var entry in menuTPF.Textures)
+                textures.Add(entry.Name);
+
+            DRB = menuDRB;
+            Shapes = new List<SpriteShape>();
+            foreach (var dlg in menuDRB.dlg.Entries)
+            {
+                if (dlg.Name == "Icon")
+                {
+                    foreach (DRBRaw.DLGOEntry dlgo in dlg.DLGOEntries)
+                        Shapes.Add(new SpriteShape(dlgo, DRB, textures, Remastered));
+                }
+            }
         }
 
         PARAM DebugParam;
@@ -223,14 +285,11 @@ namespace FromSoft_Game_Build_Planner
         {
             var weaponNames = ItemFMGS[1].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
-
             foreach (var item in MenuFMGS[29].Entries)
             {
                 if (!weaponNames.ContainsKey(item.ID))
                     weaponNames.Add(item.ID, item.Text);
             }
-
-            
 
             //Debug.WriteLine($"Name\tMaterial\tReinforce");
             foreach (var weapon in equipWepParam.Rows)
@@ -264,7 +323,7 @@ namespace FromSoft_Game_Build_Planner
                         WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Sword" });
                         break;
                     case DS1Weapon.Type.Rapier:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, Category = "Rapier" });
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Rapier" });
                         break;
                     case DS1Weapon.Type.Curved:
                         WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Curved Sword" });
@@ -524,74 +583,138 @@ namespace FromSoft_Game_Build_Planner
                     nudUpgrade.IsEnabled = true;
                     break;
             }
-
             CalculatAR();
         }
 
+        bool NotLoading = false;
+
         private void CalculatAR()
         {
-            var infusion = cmbInfusion.SelectedItem as DS1Infusion;
+           
 
-            var infusionID = 000;
-
-            if (infusion != null)
-                infusionID = infusion.Value;
-
-            var ds1Weapon = Weapons[((CategorizedItem)cmbWeapon.SelectedItem).ID + infusionID];
-
-            if (ds1Weapon.WeaponType == DS1Weapon.Type.PyroFlame || ds1Weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
-                ds1Weapon = Weapons[ds1Weapon.ID + (nudUpgrade.Value * 100)];
-
-            var reqList = new List<Tuple<int, int>>();
-
-            var statsRequired = (nudStr.Value >= ds1Weapon.StrRequired) && (nudDex.Value >= ds1Weapon.DexRequired) && 
-                (nudInt.Value >= ds1Weapon.IntRequired) && (nudFai.Value >= ds1Weapon.FaiRequired);
-
-
-            if (statsRequired)
+            if (NotLoading)
             {
-                var Stat = 0;
-                var StatRequired = 0;
-                var Multiplier = WeaponUpgrades[infusionID + nudUpgrade.Value];
-                var weaponAttack = ds1Weapon.PhysicalAttack * Multiplier.PhysicalMutliplier;
-                var strScaling = ds1Weapon.StrScaling * Multiplier.StrMultiplier;
-                var dexScaling = ds1Weapon.DexScaling * Multiplier.DexMultiplier;
-
-                var ARBoost = 0f;
-
-                /*
-                 * ARBoost=(BaseAttack*(StatCorrect/100)*(stgMaxValGrow/100)-BaseAttack*(StatCorrect/100)*(stgMaxValGrowBelow/100))/(stgMaxVal-stgMaxValBelow)+(BaseAttack*(StatCorrect/100)*(stgMaxValGrowBelow/100))
-                 */
-
-                var ScalingFactor = weaponAttack * (ds1Weapon.StrScaling / ds1Weapon.DexScaling);
-
-                var StatTypeDmg = 0f;
-
-                if (Stat >= StatRequired)
-                {
-                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal0 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1)
-                    {
-                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow1 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow0 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal0) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal0) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow0 / 100);
-                    }
-                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2)
-                    {
-                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow2 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow1 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal1) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow1 / 100);
-                    }
-                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3)
-                    {
-                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow3 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow2 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal2) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow2 / 100);
-                    }
-                    if (Stat > CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3 && Stat <= CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal4)
-                    {
-                        StatTypeDmg = (ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow4 / 100) - ScalingFactor * (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow3 / 100)) / (CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal4 - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3) * (Stat - CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxVal3) + (ScalingFactor * CalcCorrectGraph[ds1Weapon.CorrectType].stgMaxValGrow3 / 100);
-                    }
-
-                    txtAR.Text = "Usable";
-                }
                 
+
+                var infusion = cmbInfusion.SelectedItem as DS1Infusion;
+                var infusionID = 000;
+                if (infusion != null)
+                    infusionID = infusion.Value;
+
+                var weapon = Weapons[((CategorizedItem)cmbWeapon.SelectedItem).ID + infusionID];
+                if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+                    weapon = Weapons[weapon.ID + (nudUpgrade.Value * 100)];
+
+                
+
+                var multiplier = WeaponUpgrades[infusionID + nudUpgrade.Value];
+
+                var physAttack = weapon.PhysicalAttack * multiplier.PhysicalMutliplier;
+                var magicAttack = weapon.MagicAttack * multiplier.MagicMutliplier;
+                var fireAttack = weapon.FireAttack * multiplier.FireMutliplier;
+                var lightAttack = weapon.LightningAttack * multiplier.LightningMutliplier;
+
+                txtPysAR.Text = ((int)physAttack).ToString();
+                txtMagAR.Text = ((int)magicAttack).ToString();
+                txtFireAR.Text = ((int)fireAttack).ToString();
+                txtLightAR.Text = ((int)lightAttack).ToString();
+
+
+                if (weapon.StrScaling > 0 || weapon.DexScaling > 0)
+                {
+                    var strScaling = weapon.StrScaling * multiplier.StrMultiplier;
+                    var dexScaling = weapon.DexScaling * multiplier.DexMultiplier;
+                    var strDMG = GetStatDamage(nudStr.Value, weapon.StrRequired, strScaling, weapon.CorrectType, physAttack);
+                    var dexDMG = GetStatDamage(nudDex.Value, weapon.DexRequired, dexScaling, weapon.CorrectType, physAttack);
+                    var humanityScaling = 0f;
+                    if (weapon.HumanityScaling)
+                        humanityScaling = ((float)GetHumanityDamage(strDMG, dexDMG, magicAttack));
+                    var scalingDMG = strDMG + dexDMG;
+                    physAttack += scalingDMG;
+                    txtPysAR.Text = ((int)physAttack).ToString();
+                }
+
+                if (weapon.IntScaling > 0 || weapon.FaiScaling > 0)
+                {
+                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+                    var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
+                    var intDMG = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, magicAttack);
+                    var faiDMG = GetStatDamage(nudFai.Value, weapon.FaiRequired, faiScaling, weapon.CorrectType, magicAttack);
+                    var humanityScaling = 0f;
+                    if (weapon.HumanityScaling)
+                        humanityScaling = ((float)GetHumanityDamage(intDMG, faiDMG, magicAttack));
+                    var scalingDMG = intDMG + faiDMG;
+                    magicAttack += scalingDMG + humanityScaling;
+                    txtMagAR.Text = ((int)magicAttack).ToString();
+                }
+
+                txtTotalAR.Text = ((int)(physAttack + magicAttack + fireAttack + lightAttack)).ToString();
+
             }
-            else
-                txtAR.Text = "Unusable";
+        }
+
+        private float GetStatDamage(int stat, int statRequired, float statScaling, int correctType, float typeAttack)
+        {
+            if (stat >= statRequired)
+            {
+                var dS1CalcCorrect = CalcCorrectGraph[correctType];
+
+                if (stat <= dS1CalcCorrect.stgMaxVal0)
+                {
+                    return 0;
+                }
+                else if (stat > dS1CalcCorrect.stgMaxVal0 && stat <= dS1CalcCorrect.stgMaxVal1)
+                {
+                    return (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow1 / 100) - typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow0 / 100)) / (dS1CalcCorrect.stgMaxVal1 - dS1CalcCorrect.stgMaxVal0) * (stat - dS1CalcCorrect.stgMaxVal0) + (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow0 / 100));
+                }
+                else if (stat > dS1CalcCorrect.stgMaxVal1 && stat <= dS1CalcCorrect.stgMaxVal2)
+                {
+                    return (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow2 / 100) - typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow1 / 100)) / (dS1CalcCorrect.stgMaxVal2 - dS1CalcCorrect.stgMaxVal1) * (stat - dS1CalcCorrect.stgMaxVal1) + (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow1 / 100));
+                }
+                else if (stat > dS1CalcCorrect.stgMaxVal2 && stat <= dS1CalcCorrect.stgMaxVal3)
+                {
+                    return (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow3 / 100) - typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow2 / 100)) / (dS1CalcCorrect.stgMaxVal3 - dS1CalcCorrect.stgMaxVal2) * (stat - dS1CalcCorrect.stgMaxVal2) + (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow2 / 100));
+                }
+                else if (stat > dS1CalcCorrect.stgMaxVal3 && stat <= dS1CalcCorrect.stgMaxVal4)
+                {
+                    return (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow4 / 100) - typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow3 / 100)) / (dS1CalcCorrect.stgMaxVal4 - dS1CalcCorrect.stgMaxVal3) * (stat - dS1CalcCorrect.stgMaxVal3) + (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow3 / 100));
+                }
+                else if (stat > dS1CalcCorrect.stgMaxVal4)
+                {
+                    return (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow4 / 100) - typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow3 / 100)) / (dS1CalcCorrect.stgMaxVal4 - dS1CalcCorrect.stgMaxVal3) * (dS1CalcCorrect.stgMaxVal4 - dS1CalcCorrect.stgMaxVal3) + (typeAttack * (statScaling / 100) * (dS1CalcCorrect.stgMaxValGrow3 / 100));
+                }
+            }
+
+            return 0;
+        }
+
+        private double GetHumanityDamage(float statTypeDmg1, float statTypeDmg2, float typeAttack)
+        {
+            switch (nudHumanity.Value)
+            {
+                case 0:
+                    return 0;
+                case 1:
+                    return (typeAttack * 0.05) + (statTypeDmg1 * 0.05) + (statTypeDmg2 * 0.05);
+                case 2:
+                    return (typeAttack * 0.075) + (statTypeDmg1 * 0.075) + (statTypeDmg2 * 0.075);
+                case 3:
+                    return (typeAttack * 0.1) + (statTypeDmg1 * 0.1) + (statTypeDmg2 * 0.1);
+                case 4:
+                    return (typeAttack * 0.1157) + (statTypeDmg1 * 0.1157) + (statTypeDmg2 * 0.1157);
+                case 5:
+                    return (typeAttack * 0.1314) + (statTypeDmg1 * 0.1314) + (statTypeDmg2 * 0.1314);
+                case 6:
+                    return (typeAttack * 0.1471) + (statTypeDmg1 * 0.1471) + (statTypeDmg2 * 0.1471);
+                case 7:
+                    return (typeAttack * 0.1628) + (statTypeDmg1 * 0.1628) + (statTypeDmg2 * 0.1628);
+                case 8:
+                    return (typeAttack * 0.1758) + (statTypeDmg1 * 0.1758) + (statTypeDmg2 * 0.1758);
+                case 9:
+                    return (typeAttack * 0.1942) + (statTypeDmg1 * 0.1942) + (statTypeDmg2 * 0.1942);
+                default:
+                    return (typeAttack * 0.21) + (statTypeDmg1 * 0.21) + (statTypeDmg2 * 0.21);
+            }
         }
 
         private void cmbClass_SelectionChanged(object sender, SelectionChangedEventArgs e)
