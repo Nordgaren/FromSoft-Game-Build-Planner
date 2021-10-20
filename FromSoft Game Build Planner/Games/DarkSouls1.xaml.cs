@@ -276,6 +276,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 if (!armorNames.ContainsKey(item.ID))
                     armorNames.Add(item.ID, item.Text);
+                else if (string.IsNullOrWhiteSpace(armorNames[item.ID]))
+                    armorNames[item.ID] = item.Text;
             }
 
             foreach (var armor in equipProParam.Rows)
@@ -370,6 +372,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 if (!itemNames.ContainsKey(item.ID))
                     itemNames.Add(item.ID, item.Text);
+                else if (string.IsNullOrWhiteSpace(itemNames[item.ID]))
+                    itemNames[item.ID] = item.Text;
             }
 
             foreach (var item in goodsParam.Rows)
@@ -406,6 +410,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 if (!spellNames.ContainsKey(item.ID))
                     spellNames.Add(item.ID, item.Text);
+                else if (string.IsNullOrWhiteSpace(spellNames[item.ID]))
+                    spellNames[item.ID] = item.Text;
             }
 
             foreach (var spell in magicParam.Rows)
@@ -447,6 +453,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 if (!ringNames.ContainsKey(item.ID))
                     ringNames.Add(item.ID, item.Text);
+                else if (string.IsNullOrWhiteSpace(ringNames[item.ID]))
+                    ringNames[item.ID] = item.Text;
             }
 
             foreach (var ring in accessoryParam.Rows)
