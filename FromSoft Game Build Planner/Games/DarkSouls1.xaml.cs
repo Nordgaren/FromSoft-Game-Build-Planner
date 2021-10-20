@@ -52,7 +52,7 @@ namespace FromSoft_Game_Build_Planner
             }
             
 #endif
-            ReadParams(ExePath);
+            Initialize(ExePath);
         }
 
         //PARAM EquipProParam;
@@ -64,14 +64,14 @@ namespace FromSoft_Game_Build_Planner
         //PARAM ReinforceParamProt;
         //PARAM ReinforceParamWeap;
 
-        List<FMG> ItemFMGS = new List<FMG>();
-        List<FMG> MenuFMGS = new List<FMG>();
+        List<FMG> ItemFMGS;
+        List<FMG> MenuFMGS;
 
         //Armor
-        List<DS1Armor> ArmorHead = new List<DS1Armor>();
-        List<DS1Armor> ArmorBody = new List<DS1Armor>();
-        List<DS1Armor> ArmorArms = new List<DS1Armor>();
-        List<DS1Armor> ArmorLegs = new List<DS1Armor>();
+        List<DS1Armor> ArmorHead;
+        List<DS1Armor> ArmorBody;
+        List<DS1Armor> ArmorArms;
+        List<DS1Armor> ArmorLegs;
         //Weapons
         //List<DS1Weapon> WeaponDagger = new List<DS1Weapon>();
         //List<DS1Weapon> WeaponWhip = new List<DS1Weapon>();
@@ -89,27 +89,29 @@ namespace FromSoft_Game_Build_Planner
         //List<DS1Weapon> WeaponShield = new List<DS1Weapon>();
         //List<DS1Weapon> WeaponArrow = new List<DS1Weapon>();
         //List<DS1Weapon> WeaponBolt = new List<DS1Weapon>();
-        List<CategorizedItem> WeaponsList = new List<CategorizedItem>();
-        Dictionary<int, DS1Weapon> Weapons = new Dictionary<int, DS1Weapon>();
+        List<CategorizedItem> WeaponsList;
+        Dictionary<int, DS1Weapon> Weapons;
         //Spells
-        List<DS1Spell> Sorceries = new List<DS1Spell>();
-        List<DS1Spell> Miracles = new List<DS1Spell>();
-        List<DS1Spell> Pyromancies = new List<DS1Spell>();
+        List<DS1Spell> Sorceries;
+        List<DS1Spell> Miracles;
+        List<DS1Spell> Pyromancies;
         //Items
-        List<DS1Item> Items = new List<DS1Item>();
-        List<DS1Item> Consumables = new List<DS1Item>();
+        List<DS1Item> Items;
+        List<DS1Item> Consumables;
         //Rings
-        List<DS1Ring> Rings = new List<DS1Ring>();
+        List<DS1Ring> Rings;
         //Classes
-        List<DS1Class> Classes = new List<DS1Class>();
+        List<DS1Class> Classes;
         //Weapon Upgrades
         Dictionary<int, DS1WeaponUpgrade> WeaponUpgrades;
         Dictionary<int, DS1ArmorUpgrade> ArmorUpgrades;
         Dictionary<int, DS1CalcCorrect> CalcCorrectGraph;
         Dictionary<string, TPF> Textures;
 
-        private void ReadParams(string exePath)
+        private void Initialize(string exePath)
         {
+
+
             var gameParamFile = $@"{exePath}\param\GameParam\GameParam.parambnd";
             var paramDefFile = $@"{exePath}\paramdef\paramdef.paramdefbnd";
             var itemFMGFile = $@"{exePath}\msg\ENGLISH\item.msgbnd";
@@ -122,67 +124,9 @@ namespace FromSoft_Game_Build_Planner
             var paramList = new List<PARAM>();
 
             //Read Data
-            foreach (var item in itemFMGBND.Files)
-            {
-                ItemFMGS.Add(FMG.Read(item.Bytes));
-            }
+            ReadFMGs(itemFMGBND, menuFMGBND);
+            ReadParams(paramBND, paramDefBND, paramDefs, paramList);
 
-            foreach (var item in menuFMGBND.Files)
-            {
-                MenuFMGS.Add(FMG.Read(item.Bytes));
-            }
-
-            foreach (var item in paramBND.Files)
-            {
-                paramList.Add(PARAM.Read(item.Bytes));
-            }
-
-            foreach (var item in paramDefBND.Files)
-            {
-                paramDefs.Add(PARAMDEF.Read(item.Bytes));
-            }
-
-            foreach (var param in paramList)
-            {
-                var result = param.ApplyParamdefCarefully(paramDefs);
-                if (!result)
-                    Debug.WriteLine($"{param.ParamType} Did not apply!");
-            }
-
-            foreach (var param in paramList)
-            {
-                switch (param.ParamType)
-                {
-                    case "EQUIP_PARAM_PROTECTOR_ST":  
-                        SortArmors(param); 
-                        break; 
-                    case "EQUIP_PARAM_WEAPON_ST":  
-                        SortWeapons(param); 
-                        break; 
-                    case "EQUIP_PARAM_GOODS_ST":  
-                        SortItems(param); 
-                        break; 
-                    case "MAGIC_PARAM_ST":  
-                        SortSpells(param); 
-                        break; 
-                    case "EQUIP_PARAM_ACCESSORY_ST":  
-                        SortRings(param); 
-                        break; 
-                    case "CHARACTER_INIT_PARAM":  
-                        SortClasses(param); 
-                        break; 
-                    case "REINFORCE_PARAM_WEAPON_ST":  
-                        WeaponUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1WeaponUpgrade(x));
-                        break; 
-                    case "REINFORCE_PARAM_PROTECTOR_ST": 
-                        ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ;
-                        break; 
-                    case "CACL_CORRECT_GRAPH_ST":  
-                        CalcCorrectGraph = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1CalcCorrect(x));
-                        break; 
-                }
-            }
-            
 
             //var drbFile = $@"{ExePath}\menu\menu.drb";
             //var tpfFile = $@"{ExePath}\menu\menu.tpf";
@@ -225,6 +169,75 @@ namespace FromSoft_Game_Build_Planner
             CalculatAR();
         }
 
+        private void ReadParams(IBinder paramBND, IBinder paramDefBND, List<PARAMDEF> paramDefs, List<PARAM> paramList)
+        {
+            foreach (var item in paramBND.Files)
+            {
+                paramList.Add(PARAM.Read(item.Bytes));
+            }
+
+            foreach (var item in paramDefBND.Files)
+            {
+                paramDefs.Add(PARAMDEF.Read(item.Bytes));
+            }
+
+            foreach (var param in paramList)
+            {
+                var result = param.ApplyParamdefCarefully(paramDefs);
+                if (!result)
+                    Debug.WriteLine($"{param.ParamType} Did not apply!");
+            }
+
+            foreach (var param in paramList)
+            {
+                switch (param.ParamType)
+                {
+                    case "EQUIP_PARAM_PROTECTOR_ST":
+                        SortArmors(param);
+                        break;
+                    case "EQUIP_PARAM_WEAPON_ST":
+                        SortWeapons(param);
+                        break;
+                    case "EQUIP_PARAM_GOODS_ST":
+                        SortItems(param);
+                        break;
+                    case "MAGIC_PARAM_ST":
+                        SortSpells(param);
+                        break;
+                    case "EQUIP_PARAM_ACCESSORY_ST":
+                        SortRings(param);
+                        break;
+                    case "CHARACTER_INIT_PARAM":
+                        SortClasses(param);
+                        break;
+                    case "REINFORCE_PARAM_WEAPON_ST":
+                        WeaponUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1WeaponUpgrade(x));
+                        break;
+                    case "REINFORCE_PARAM_PROTECTOR_ST":
+                        ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ;
+                        break;
+                    case "CACL_CORRECT_GRAPH_ST":
+                        CalcCorrectGraph = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1CalcCorrect(x));
+                        break;
+                }
+            }
+        }
+
+        private void ReadFMGs(IBinder itemFMGBND, IBinder menuFMGBND)
+        {
+            ItemFMGS = new List<FMG>();
+            MenuFMGS = new List<FMG>();
+            foreach (var item in itemFMGBND.Files)
+            {
+                ItemFMGS.Add(FMG.Read(item.Bytes));
+            }
+
+            foreach (var item in menuFMGBND.Files)
+            {
+                MenuFMGS.Add(FMG.Read(item.Bytes));
+            }
+        }
+
         DRBRaw DRB;
         List<SpriteShape> Shapes;
         bool Remastered = false;
@@ -252,6 +265,11 @@ namespace FromSoft_Game_Build_Planner
 
         private void SortArmors(PARAM equipProParam)
         {
+            ArmorHead = new List<DS1Armor>();
+            ArmorBody = new List<DS1Armor>();
+            ArmorArms = new List<DS1Armor>();
+            ArmorLegs = new List<DS1Armor>();
+
             var armorNames = ItemFMGS[2].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
             foreach (var item in MenuFMGS[31].Entries)
@@ -283,15 +301,30 @@ namespace FromSoft_Game_Build_Planner
 
         private void SortWeapons(PARAM equipWepParam)
         {
-            var weaponNames = ItemFMGS[1].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
+            WeaponsList = new List<CategorizedItem>();
+            Weapons = new Dictionary<int, DS1Weapon>();
 
+            //Make weaponNames dictionary
+            var weaponNames = ItemFMGS[1].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
             foreach (var item in MenuFMGS[29].Entries)
             {
                 if (!weaponNames.ContainsKey(item.ID))
                     weaponNames.Add(item.ID, item.Text);
+                else if (string.IsNullOrWhiteSpace(weaponNames[item.ID]))
+                    weaponNames[item.ID] = item.Text;
             }
 
-            //Debug.WriteLine($"Name\tMaterial\tReinforce");
+            //Make weaponCategories dictionary
+            var weaponCategories = ItemFMGS[11].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
+            foreach (var item in MenuFMGS[28].Entries)
+            {
+                if (!weaponCategories.ContainsKey(item.ID))
+                    weaponCategories.Add(item.ID, item.Text);
+                else if (string.IsNullOrWhiteSpace(weaponCategories[item.ID]))
+                    weaponCategories[item.ID] = item.Text;
+            }
+
+            //Add Weapons to WeaponList
             foreach (var weapon in equipWepParam.Rows)
             {
                 if (weaponNames.ContainsKey(weapon.ID))
@@ -299,12 +332,14 @@ namespace FromSoft_Game_Build_Planner
                 else
                     continue;
 
-                //Debug.WriteLine($"{weapon.Name}\t{weapon.Cells[22].Value}\t{weapon.Cells[61].Value}");
-
                 if (string.IsNullOrWhiteSpace(weapon.Name))
                     continue;
 
-                var dsWeapon = new DS1Weapon(weapon);
+                var dsWeapon = new DS1Weapon(weapon, weaponCategories.ContainsKey(weapon.ID) ? weaponCategories[weapon.ID] : "Misc");
+
+                //Gets rid of base weapon entries like "Bolt" and "Arrow" that don't actually exist in game.
+                if (dsWeapon.CategoryName == null)
+                    continue;
 
                 Weapons.Add(dsWeapon.ID, dsWeapon);
 
@@ -314,61 +349,7 @@ namespace FromSoft_Game_Build_Planner
                 if (dsWeapon.UpgradePath == DS1Weapon.Upgrade.Infused)
                     continue;
 
-                switch (dsWeapon.WeaponType)
-                {
-                    case DS1Weapon.Type.Dagger:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Dagger" });
-                        break;
-                    case DS1Weapon.Type.Sword:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Sword" });
-                        break;
-                    case DS1Weapon.Type.Rapier:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Rapier" });
-                        break;
-                    case DS1Weapon.Type.Curved:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Curved Sword" });
-                        break;
-                    case DS1Weapon.Type.Axe:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Axe" });
-                        break;
-                    case DS1Weapon.Type.Blunt:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Blunt" });
-                        break;
-                    case DS1Weapon.Type.Spear:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Spear" });
-                        break;
-                    case DS1Weapon.Type.Halberd:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Halberd" });
-                        break;
-                    case DS1Weapon.Type.SpellTool:
-                    case DS1Weapon.Type.PyroFlame:
-                    case DS1Weapon.Type.PyroFlameAscended:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Spell Tool" });
-                        break;
-                    case DS1Weapon.Type.Fist:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Fist" });
-                        break;
-                    case DS1Weapon.Type.Bow:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Bow" });
-                        break;
-                    case DS1Weapon.Type.Crossbow:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Crossbow" });
-                        break;
-                    case DS1Weapon.Type.Shield:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Shield" });
-                        break;
-                    case DS1Weapon.Type.Arrow:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Arrow" });
-                        break;
-                    case DS1Weapon.Type.Bolt:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Bolt" });
-                        break;
-                    case DS1Weapon.Type.Whip:
-                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = "Whip" });
-                        break;
-                    default:
-                        break;
-                }
+                WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
             }
 
             WeaponsList = WeaponsList.GroupBy(x => x.Name).Select(x => x.First()).ToList();
@@ -380,6 +361,8 @@ namespace FromSoft_Game_Build_Planner
 
         private void SortItems(PARAM goodsParam)
         {
+            Items = new List<DS1Item>();
+            Consumables = new List<DS1Item>();
 
             var itemNames = ItemFMGS[0].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
@@ -413,6 +396,10 @@ namespace FromSoft_Game_Build_Planner
 
         private void SortSpells(PARAM magicParam)
         {
+            Sorceries = new List<DS1Spell>();
+            Miracles = new List<DS1Spell>();
+            Pyromancies = new List<DS1Spell>();
+
             var spellNames = ItemFMGS[4].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
             foreach (var item in MenuFMGS[25].Entries)
@@ -452,6 +439,8 @@ namespace FromSoft_Game_Build_Planner
 
         private void SortRings(PARAM accessoryParam)
         {
+            Rings = new List<DS1Ring>();
+
             var ringNames = ItemFMGS[3].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
             foreach (var item in MenuFMGS[27].Entries)
@@ -476,50 +465,52 @@ namespace FromSoft_Game_Build_Planner
 
         private void SortClasses(PARAM charInitParam)
         {
-            var classNames = MenuFMGS[6].Entries;
+            Classes = new List<DS1Class>();
+
+            var classNames = MenuFMGS[6].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
             foreach (var param in charInitParam.Rows)
             {
                 switch (param.ID)
                 {
                     case 3000:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132020).Text;
+                        param.Name = classNames[132020];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3001:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132021).Text;
+                        param.Name = classNames[132021];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3002:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132022).Text;
+                        param.Name = classNames[132022];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3003:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132023).Text;
+                        param.Name = classNames[132023];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3004:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132024).Text;
+                        param.Name = classNames[132024];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3005:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132025).Text;
+                        param.Name = classNames[132025];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3006:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132026).Text;
+                        param.Name = classNames[132026];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3007:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132027).Text;
+                        param.Name = classNames[132027];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3008:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132028).Text;
+                        param.Name = classNames[132028];
                         Classes.Add(new DS1Class(param));
                         break;
                     case 3009:
-                        param.Name = classNames.FirstOrDefault(x => x.ID == 132029).Text;
+                        param.Name = classNames[132029];
                         Classes.Add(new DS1Class(param));
                         break;
                     default:
@@ -583,6 +574,7 @@ namespace FromSoft_Game_Build_Planner
                     nudUpgrade.IsEnabled = true;
                     break;
             }
+
             CalculatAR();
         }
 
@@ -590,8 +582,6 @@ namespace FromSoft_Game_Build_Planner
 
         private void CalculatAR()
         {
-           
-
             if (NotLoading)
             {
                 
@@ -619,6 +609,19 @@ namespace FromSoft_Game_Build_Planner
                 txtFireAR.Text = ((int)fireAttack).ToString();
                 txtLightAR.Text = ((int)lightAttack).ToString();
 
+                if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+                {
+                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+                    var intDMG = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
+                    var humanityScaling = 0f;
+                    if (weapon.HumanityScaling)
+                        humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
+                    var scalingDMG = intDMG;
+                    magicAttack += scalingDMG + humanityScaling;
+                    txtFireAR.Text = ((int)magicAttack).ToString();
+                    return;
+                }
+
 
                 if (weapon.StrScaling > 0 || weapon.DexScaling > 0)
                 {
@@ -628,7 +631,7 @@ namespace FromSoft_Game_Build_Planner
                     var dexDMG = GetStatDamage(nudDex.Value, weapon.DexRequired, dexScaling, weapon.CorrectType, physAttack);
                     var humanityScaling = 0f;
                     if (weapon.HumanityScaling)
-                        humanityScaling = ((float)GetHumanityDamage(strDMG, dexDMG, magicAttack));
+                        humanityScaling = (float)GetHumanityDamage(strDMG, dexDMG, magicAttack);
                     var scalingDMG = strDMG + dexDMG;
                     physAttack += scalingDMG;
                     txtPysAR.Text = ((int)physAttack).ToString();
@@ -642,7 +645,7 @@ namespace FromSoft_Game_Build_Planner
                     var faiDMG = GetStatDamage(nudFai.Value, weapon.FaiRequired, faiScaling, weapon.CorrectType, magicAttack);
                     var humanityScaling = 0f;
                     if (weapon.HumanityScaling)
-                        humanityScaling = ((float)GetHumanityDamage(intDMG, faiDMG, magicAttack));
+                        humanityScaling = (float)GetHumanityDamage(intDMG, faiDMG, magicAttack);
                     var scalingDMG = intDMG + faiDMG;
                     magicAttack += scalingDMG + humanityScaling;
                     txtMagAR.Text = ((int)magicAttack).ToString();
@@ -773,9 +776,7 @@ namespace FromSoft_Game_Build_Planner
         {
             RecalculateStats();
 
-            if (NotLoading)
-                CalculatAR();
-
+            CalculatAR();
         }
 
         private void cmbInfusion_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -790,6 +791,9 @@ namespace FromSoft_Game_Build_Planner
             CalculatAR();
         }
 
-
+        private void Reload_Click(object sender, RoutedEventArgs e)
+        {
+            Initialize(ExePath);
+        }
     }
 }

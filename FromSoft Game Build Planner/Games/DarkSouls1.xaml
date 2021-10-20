@@ -57,5 +57,11 @@
         <Label x:Name="lblTotalAR" Content="Total AR" HorizontalAlignment="Left" Margin="375,45,0,0" VerticalAlignment="Top"/>
         <local:IntegerUpDown x:Name="nudHumanity" Margin="719,31,6,359" ValueChanged="nud_ValueChanged" TabIndex="1"/>
         <Label x:Name="lblHumanity" Content="Humanity" HorizontalAlignment="Left" Margin="652,30,0,0" VerticalAlignment="Top"/>
+        <Menu Height="20" VerticalAlignment="Top" >
+            <MenuItem Header="File">
+                <MenuItem Header="Open" HorizontalAlignment="Left"/>
+                <MenuItem Name="Reload" Header="Reload" HorizontalAlignment="Left" Click="Reload_Click"/>
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>

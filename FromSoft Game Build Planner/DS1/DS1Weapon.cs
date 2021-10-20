@@ -46,7 +46,8 @@ namespace FromSoft_Game_Build_Planner
         public int ID { get; set; }
         public ushort IconID { get; set; }
 
-        public byte Category { get; set; }
+        public byte CategoryID { get; set; }
+        public string CategoryName { get; set; }
         public int BehaviorID { get; set; }
 
         public float Weight { get; set; }
@@ -106,7 +107,7 @@ namespace FromSoft_Game_Build_Planner
         public Type WeaponType { get; set; }
         public bool ShowID { get; private set; } = false;
 
-        public DS1Weapon(PARAM.Row weaponParam)
+        public DS1Weapon(PARAM.Row weaponParam, string categoryName)
         {
             Name = weaponParam.Name;
 
@@ -115,7 +116,8 @@ namespace FromSoft_Game_Build_Planner
             ID = weaponParam.ID;
             IconID = (ushort)weaponParam.Cells[47].Value;
 
-            Category = (byte)weaponParam.Cells[68].Value;
+            CategoryID = (byte)weaponParam.Cells[68].Value;
+            CategoryName = categoryName == "" ? "Misc" : categoryName;
             BehaviorID = (int)weaponParam.Cells[0].Value;
 
             Weight = (float)weaponParam.Cells[3].Value;
@@ -268,7 +270,7 @@ namespace FromSoft_Game_Build_Planner
 
         private void SetWeaponType()
         {
-            switch (Category)
+            switch (CategoryID)
             {
                 case 0:
                     WeaponType = Type.Dagger;
