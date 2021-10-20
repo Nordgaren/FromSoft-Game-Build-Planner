@@ -13,5 +13,10 @@ namespace FromSoft_Game_Build_Planner
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            var DS1 = new DarkSouls1();
+            DS1.Show();
+        }
     }
 }

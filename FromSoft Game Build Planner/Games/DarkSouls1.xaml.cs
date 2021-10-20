@@ -617,9 +617,9 @@ namespace FromSoft_Game_Build_Planner
                     if (weapon.HumanityScaling)
                         humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
                     var scalingDMG = intDMG;
-                    magicAttack += scalingDMG + humanityScaling;
-                    txtFireAR.Text = ((int)magicAttack).ToString();
-                    return;
+                    fireAttack += scalingDMG + humanityScaling;
+                    var magAdjust = GetStatDamage(0, 0, intScaling, weapon.CorrectType, fireAttack);
+                    txtFireAR.Text = ((int)fireAttack).ToString();
                 }
 
 
