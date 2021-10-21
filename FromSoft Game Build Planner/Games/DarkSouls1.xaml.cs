@@ -90,6 +90,7 @@ namespace FromSoft_Game_Build_Planner
         //List<DS1Weapon> WeaponArrow = new List<DS1Weapon>();
         //List<DS1Weapon> WeaponBolt = new List<DS1Weapon>();
         List<CategorizedItem> WeaponsList;
+        List<CategorizedItem> AmmoList;
         Dictionary<int, DS1Weapon> Weapons;
         //Spells
         List<DS1Spell> Sorceries;
@@ -304,6 +305,7 @@ namespace FromSoft_Game_Build_Planner
         private void SortWeapons(PARAM equipWepParam)
         {
             WeaponsList = new List<CategorizedItem>();
+            AmmoList = new List<CategorizedItem>();
             Weapons = new Dictionary<int, DS1Weapon>();
 
             //Make weaponNames dictionary
@@ -351,10 +353,20 @@ namespace FromSoft_Game_Build_Planner
                 if (dsWeapon.UpgradePath == DS1Weapon.Upgrade.Infused)
                     continue;
 
-                WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
+                switch (dsWeapon.WeaponType)
+                {
+                    case DS1Weapon.Type.Arrow:
+                    case DS1Weapon.Type.Bolt:
+                        AmmoList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
+                        break;
+                    default:
+                        WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
+                        break;
+                }
+
             }
 
-            WeaponsList = WeaponsList.GroupBy(x => x.Name).Select(x => x.First()).ToList();
+            WeaponsList = WeaponsList.GroupBy(x => x.Name).Select(x => x.First()).OrderBy(x => x.Category).OrderBy(x => x.ID != 900000).ToList();
             ListCollectionView lcv = new ListCollectionView(WeaponsList);
             lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
 
