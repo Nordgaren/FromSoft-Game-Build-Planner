@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:FromSoft_Game_Build_Planner"
              mc:Ignorable="d" Height="24" Width="55">
     <Grid  Height="23" VerticalAlignment="Top">
-        <TextBox x:Name="txtNum" x:FieldModifier="private" Text="0" TextChanged="txtNum_TextChanged" Margin="0,2,0,3" LostFocus="txtNum_LostFocus" HorizontalAlignment="Center" Width="48" />
-        <Button x:Name="cmdUp" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▲" Click="cmdUp_Click" Margin="41,2,4,13" TabIndex="-1" />
-        <Button x:Name="cmdDown" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▼" Click="cmdDown_Click" Margin="41,12,4,3" TabIndex="-1" />
+        <TextBox x:Name="txtNum" x:FieldModifier="private" Text="0" TextChanged="txtNum_TextChanged" HorizontalContentAlignment="Center" Margin="0,2,0,3" LostFocus="txtNum_LostFocus" HorizontalAlignment="Center" Width="48" Background="{Binding Background}" Foreground="White" BorderThickness="0"/>
+        <Button x:Name="cmdUp" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▲" Click="cmdUp_Click" Margin="41,2,4,13" TabIndex="-1" Background="Transparent" Foreground="White" BorderThickness="0"/>
+        <Button x:Name="cmdDown" x:FieldModifier="private" FontSize="10" Padding="0,-4,0,0" Content="▼" Click="cmdDown_Click" Margin="41,12,4,3" TabIndex="-1" Background="Transparent" Foreground="White" BorderThickness="0"/>
     </Grid>
 
 </UserControl>

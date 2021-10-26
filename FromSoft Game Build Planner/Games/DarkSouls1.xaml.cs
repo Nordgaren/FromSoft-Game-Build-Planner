@@ -44,6 +44,22 @@ namespace FromSoft_Game_Build_Planner
             Initialize(ExePath);
         }
 
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
         //PARAM EquipProParam;
         //PARAM EquipWepParam;
         //PARAM MagicParam;
@@ -208,7 +224,7 @@ namespace FromSoft_Game_Build_Planner
                     case "REINFORCE_PARAM_PROTECTOR_ST":
                         ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ;
                         break;
-                    
+
                     case "CACL_CORRECT_GRAPH_ST":
                         CalcCorrectGraph = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1CalcCorrect(x));
                         break;
@@ -234,7 +250,7 @@ namespace FromSoft_Game_Build_Planner
         DRBRaw DRB;
         List<SpriteShape> Shapes;
         bool Remastered = false;
-        
+
 
         public void ReadDRB(TPF menuTPF, DRBRaw menuDRB)
         {
@@ -306,7 +322,7 @@ namespace FromSoft_Game_Build_Planner
 
             //Make weaponNames dictionary
             var weaponNames = ItemFMGS[1].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
-            
+
             if (!DSR)
             {
                 foreach (var item in MenuFMGS[29].Entries)
@@ -373,10 +389,17 @@ namespace FromSoft_Game_Build_Planner
             }
 
             WeaponsList = WeaponsList.GroupBy(x => x.Name).Select(x => x.First()).OrderBy(x => x.Category).OrderBy(x => x.ID != 900000).ToList();
-            ListCollectionView lcv = new ListCollectionView(WeaponsList);
-            lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+            ListCollectionView lcv1 = new ListCollectionView(WeaponsList);
+            lcv1.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
 
-            cmbWeapon.ItemsSource = lcv;
+            ListCollectionView lcv2 = new ListCollectionView(WeaponsList);
+            lcv2.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+
+
+            cmbRH1Weapon.ItemsSource = lcv1;
+            cmbRH2Weapon.ItemsSource = lcv2;
+            cmbRH1Weapon.SelectedIndex = 0;
+            cmbRH2Weapon.SelectedIndex = 0;
         }
 
         private void SortItems(PARAM goodsParam)
@@ -562,10 +585,24 @@ namespace FromSoft_Game_Build_Planner
             cmbClass.SelectedIndex = 0;
         }
 
-        private void cmbWeapon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cmbRH1Weapon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var weapon = Weapons[((CategorizedItem)cmbWeapon.SelectedItem).ID];
+            var weapon = Weapons[((CategorizedItem)cmbRH1Weapon.SelectedItem).ID];
+            ChangeWeapon(weapon, cmbRH1Infusion, nudRH1Upgrade);
 
+            CalculatAR();
+        }
+
+        private void cmbRH2Weapon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var weapon = Weapons[((CategorizedItem)cmbRH2Weapon.SelectedItem).ID];
+            ChangeWeapon(weapon, cmbRH2Infusion, nudRH2Upgrade);
+
+            CalculatAR();
+        }
+
+        private void ChangeWeapon(DS1Weapon weapon, ComboBox cmbInfusion, IntegerUpDown nudUpgrade)
+        {
             switch (weapon.UpgradePath)
             {
                 case DS1Weapon.Upgrade.None:
@@ -610,8 +647,6 @@ namespace FromSoft_Game_Build_Planner
                     nudUpgrade.IsEnabled = true;
                     break;
             }
-
-            CalculatAR();
         }
 
         bool NotLoading = false;
@@ -619,94 +654,94 @@ namespace FromSoft_Game_Build_Planner
 
         private void CalculatAR()
         {
-            if (NotLoading)
-            {
-                
+            //if (NotLoading)
+            //{
 
-                var infusion = cmbInfusion.SelectedItem as DS1Infusion;
-                var infusionID = 000;
-                if (infusion != null)
-                    infusionID = infusion.Value;
 
-                var weapon = Weapons[((CategorizedItem)cmbWeapon.SelectedItem).ID + infusionID];
-                if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
-                    weapon = Weapons[weapon.ID + (nudUpgrade.Value * 100)];
+            //    var infusion = cmbInfusion.SelectedItem as DS1Infusion;
+            //    var infusionID = 000;
+            //    if (infusion != null)
+            //        infusionID = infusion.Value;
 
-                
+            //    var weapon = Weapons[((CategorizedItem)cmbWeapon.SelectedItem).ID + infusionID];
+            //    if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+            //        weapon = Weapons[weapon.ID + (nudUpgrade.Value * 100)];
 
-                var multiplier = WeaponUpgrades[infusionID + nudUpgrade.Value];
 
-                var physAttack = weapon.PhysicalAttack * multiplier.PhysicalMutliplier;
-                var magicAttack = weapon.MagicAttack * multiplier.MagicMutliplier;
-                var fireAttack = weapon.FireAttack * multiplier.FireMutliplier;
-                var lightAttack = weapon.LightningAttack * multiplier.LightningMutliplier;
 
-                txtPysAR.Text = ((int)physAttack).ToString();
-                txtMagAR.Text = ((int)magicAttack).ToString();
-                txtFireAR.Text = ((int)fireAttack).ToString();
-                txtLightAR.Text = ((int)lightAttack).ToString();
+            //    var multiplier = WeaponUpgrades[infusionID + nudUpgrade.Value];
 
-                if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
-                {
-                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
-                    var intDMG = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
-                    var scalingDMG = intDMG;
-                    fireAttack += scalingDMG + humanityScaling;
-                    var magAdjust = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
-                    txtFireAR.Text = ((int)fireAttack).ToString();
-                    txtMagAdj.Text = ((int)(100 + weapon.IntScaling)).ToString();
-                    return;
-                }
+            //    var physAttack = weapon.PhysicalAttack * multiplier.PhysicalMutliplier;
+            //    var magicAttack = weapon.MagicAttack * multiplier.MagicMutliplier;
+            //    var fireAttack = weapon.FireAttack * multiplier.FireMutliplier;
+            //    var lightAttack = weapon.LightningAttack * multiplier.LightningMutliplier;
 
-                if (weapon.WeaponType == DS1Weapon.Type.SpellTool)
-                {
-                    var magAdj = 100f;
-                    var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
-                    var faiAdj = GetStatDamage(nudFai.Value, weapon.FaiRequired, faiScaling, weapon.CorrectType, magAdj);
-                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
-                    var intAdj = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, magAdj);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(faiAdj, intAdj, magicAttack); ;
-                    magAdj += faiAdj + intAdj + humanityScaling;
-                    txtMagAdj.Text = ((int)magAdj).ToString();
-                    return;
-                }
+            //    txtPysAR.Text = ((int)physAttack).ToString();
+            //    txtMagAR.Text = ((int)magicAttack).ToString();
+            //    txtFireAR.Text = ((int)fireAttack).ToString();
+            //    txtLightAR.Text = ((int)lightAttack).ToString();
 
-                if (weapon.StrScaling > 0 || weapon.DexScaling > 0)
-                {
-                    var strScaling = weapon.StrScaling * multiplier.StrMultiplier;
-                    var dexScaling = weapon.DexScaling * multiplier.DexMultiplier;
-                    var strDMG = GetStatDamage(nudStr.Value, weapon.StrRequired, strScaling, weapon.CorrectType, physAttack);
-                    var dexDMG = GetStatDamage(nudDex.Value, weapon.DexRequired, dexScaling, weapon.CorrectType, physAttack);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(strDMG, dexDMG, magicAttack);
-                    var scalingDMG = strDMG + dexDMG;
-                    physAttack += scalingDMG;
-                    txtPysAR.Text = ((int)physAttack).ToString();
-                }
+            //    if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+            //    {
+            //        var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+            //        var intDMG = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
+            //        var humanityScaling = 0f;
+            //        if (weapon.HumanityScaling)
+            //            humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
+            //        var scalingDMG = intDMG;
+            //        fireAttack += scalingDMG + humanityScaling;
+            //        var magAdjust = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
+            //        txtFireAR.Text = ((int)fireAttack).ToString();
+            //        txtMagAdj.Text = ((int)(100 + weapon.IntScaling)).ToString();
+            //        return;
+            //    }
 
-                if (weapon.IntScaling > 0 || weapon.FaiScaling > 0)
-                {
-                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
-                    var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
-                    var intDMG = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, magicAttack);
-                    var faiDMG = GetStatDamage(nudFai.Value, weapon.FaiRequired, faiScaling, weapon.CorrectType, magicAttack);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(intDMG, faiDMG, magicAttack);
-                    var scalingDMG = intDMG + faiDMG;
-                    magicAttack += scalingDMG + humanityScaling;
-                    txtMagAR.Text = ((int)magicAttack).ToString();
-                }
+            //    if (weapon.WeaponType == DS1Weapon.Type.SpellTool)
+            //    {
+            //        var magAdj = 100f;
+            //        var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
+            //        var faiAdj = GetStatDamage(nudFai.Value, weapon.FaiRequired, faiScaling, weapon.CorrectType, magAdj);
+            //        var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+            //        var intAdj = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, magAdj);
+            //        var humanityScaling = 0f;
+            //        if (weapon.HumanityScaling)
+            //            humanityScaling = (float)GetHumanityDamage(faiAdj, intAdj, magicAttack); ;
+            //        magAdj += faiAdj + intAdj + humanityScaling;
+            //        txtMagAdj.Text = ((int)magAdj).ToString();
+            //        return;
+            //    }
 
-                txtTotalAR.Text = ((int)(physAttack + magicAttack + fireAttack + lightAttack)).ToString();
+            //    if (weapon.StrScaling > 0 || weapon.DexScaling > 0)
+            //    {
+            //        var strScaling = weapon.StrScaling * multiplier.StrMultiplier;
+            //        var dexScaling = weapon.DexScaling * multiplier.DexMultiplier;
+            //        var strDMG = GetStatDamage(nudStr.Value, weapon.StrRequired, strScaling, weapon.CorrectType, physAttack);
+            //        var dexDMG = GetStatDamage(nudDex.Value, weapon.DexRequired, dexScaling, weapon.CorrectType, physAttack);
+            //        var humanityScaling = 0f;
+            //        if (weapon.HumanityScaling)
+            //            humanityScaling = (float)GetHumanityDamage(strDMG, dexDMG, magicAttack);
+            //        var scalingDMG = strDMG + dexDMG;
+            //        physAttack += scalingDMG;
+            //        txtPysAR.Text = ((int)physAttack).ToString();
+            //    }
 
-            }
+            //    if (weapon.IntScaling > 0 || weapon.FaiScaling > 0)
+            //    {
+            //        var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+            //        var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
+            //        var intDMG = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, magicAttack);
+            //        var faiDMG = GetStatDamage(nudFai.Value, weapon.FaiRequired, faiScaling, weapon.CorrectType, magicAttack);
+            //        var humanityScaling = 0f;
+            //        if (weapon.HumanityScaling)
+            //            humanityScaling = (float)GetHumanityDamage(intDMG, faiDMG, magicAttack);
+            //        var scalingDMG = intDMG + faiDMG;
+            //        magicAttack += scalingDMG + humanityScaling;
+            //        txtMagAR.Text = ((int)magicAttack).ToString();
+            //    }
+
+            //    txtTotalAR.Text = ((int)(physAttack + magicAttack + fireAttack + lightAttack)).ToString();
+
+            //}
         }
 
         private float GetStatDamage(int stat, int statRequired, float statScaling, int correctType, float typeAttack)
@@ -801,7 +836,7 @@ namespace FromSoft_Game_Build_Planner
             var faith = nudFai.Value;
             var sl = CalculateSL(vitality, attunement, endurance, strength, dexterity, resistance, intelligence, faith);
 
-            txtSoulLevel.Text = sl.ToString();
+            //txtSoulLevel.Text = sl.ToString();
 
         }
 
@@ -834,12 +869,12 @@ namespace FromSoft_Game_Build_Planner
 
         private void cmbInfusion_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DS1Infusion infusion = cmbInfusion.SelectedItem as DS1Infusion;
+            DS1Infusion infusion = cmbRH1Infusion.SelectedItem as DS1Infusion;
 
             if (infusion == null)
                 return;
 
-            nudUpgrade.MaxValue = infusion.MaxUpgrade;
+            nudRH1Upgrade.MaxValue = infusion.MaxUpgrade;
 
             CalculatAR();
         }
@@ -857,5 +892,7 @@ namespace FromSoft_Game_Build_Planner
             if (result)
                 Close();
         }
+
+        
     }
 }
