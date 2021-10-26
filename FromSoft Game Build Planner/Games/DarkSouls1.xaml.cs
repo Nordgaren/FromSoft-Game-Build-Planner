@@ -15,8 +15,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using SharpDX.Direct3D9;
 using SF_Compatible_DRB_Icon_Appender;
 using SoulsFormats;
+using SharpDX.Direct3D9;
 
 namespace FromSoft_Game_Build_Planner
 {
@@ -77,7 +79,8 @@ namespace FromSoft_Game_Build_Planner
         //List<DS1Weapon> WeaponArrow = new List<DS1Weapon>();
         //List<DS1Weapon> WeaponBolt = new List<DS1Weapon>();
         List<CategorizedItem> WeaponsList;
-        List<CategorizedItem> AmmoList;
+        List<CategorizedItem> BoltList;
+        List<CategorizedItem> ArrowList;
         Dictionary<int, DS1Weapon> Weapons;
         //Spells
         List<DS1Spell> Sorceries;
@@ -125,7 +128,7 @@ namespace FromSoft_Game_Build_Planner
             //var tpfTexFile5 = $@"{ExePath}\menu\menu_5.tpf";
             //var drb = DRBRaw.Read(File.ReadAllBytes(drbFile));
             //var tpf = TPF.Read(tpfFile);
-            //List<TPF> tpfs = new List<TPF>() 
+            //List<TPF> tpfs = new List<TPF>()
             //{
             //TPF.Read(tpfTexFile0),
             //TPF.Read(tpfTexFile1),
@@ -134,7 +137,7 @@ namespace FromSoft_Game_Build_Planner
             //TPF.Read(tpfTexFile4),
             //TPF.Read(tpfTexFile5)
             //};
-
+            ////tpfs[0].Textures[0].Bytes
             //DRBRaw.DLGEntry iconOld;
 
             //foreach (var dlgo in drb.dlg.Entries)
@@ -297,7 +300,8 @@ namespace FromSoft_Game_Build_Planner
         private void SortWeapons(PARAM equipWepParam)
         {
             WeaponsList = new List<CategorizedItem>();
-            AmmoList = new List<CategorizedItem>();
+            BoltList = new List<CategorizedItem>();
+            ArrowList = new List<CategorizedItem>();
             Weapons = new Dictionary<int, DS1Weapon>();
 
             //Make weaponNames dictionary
@@ -356,8 +360,10 @@ namespace FromSoft_Game_Build_Planner
                 switch (dsWeapon.WeaponType)
                 {
                     case DS1Weapon.Type.Arrow:
+                        ArrowList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
+                        break;
                     case DS1Weapon.Type.Bolt:
-                        AmmoList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
+                        BoltList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
                         break;
                     default:
                         WeaponsList.Add(new CategorizedItem() { Name = dsWeapon.Name, ID = dsWeapon.ID, Category = dsWeapon.CategoryName });
@@ -609,6 +615,7 @@ namespace FromSoft_Game_Build_Planner
         }
 
         bool NotLoading = false;
+
 
         private void CalculatAR()
         {
