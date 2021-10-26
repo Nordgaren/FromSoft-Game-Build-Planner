@@ -303,7 +303,11 @@ namespace FromSoft_Game_Build_Planner
                     if (BaseChangeCategory == 1)
                         WeaponType = Type.PyroFlame;
                     else if (BaseChangeCategory == 2)
+                    {
+                        Name = $"{Name} (Ascended)";
                         WeaponType = Type.PyroFlameAscended;
+
+                    }
                     else
                         WeaponType = Type.SpellTool;
                     break;

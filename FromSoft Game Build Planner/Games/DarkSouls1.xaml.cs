@@ -25,33 +25,20 @@ namespace FromSoft_Game_Build_Planner
     /// </summary>
     public partial class DarkSouls1 : Window
     {
-        private string ExePath;
 
         private int SoulLevel;
 
-        public DarkSouls1()
+        bool DSR = false;
+
+        string ExePath;
+
+        public DarkSouls1(string exePath, bool dsr)
         {
+            DSR = dsr;
+            ExePath = exePath;
             InitializeComponent();
-#if DEBUG
-            ExePath = @"F:\Dark Souls Mod Stuff\Remastest 1.4 Beta\DATA";
-            //ExePath = @"F:\Dark Souls Mod Stuff\Vanilla PTDE\DATA";
-
-
-#else
-            var ofd = new OpenFileDialog();
-
-            var result = ofd.ShowDialog();
-
-            if (result.HasValue)
-            {
-                if (ofd.FileName.EndsWith("DARKSOULS.exe"))
-                    ExePath = System.IO.Path.GetDirectoryName(ofd.FileName);
-                else
-                    MessageBox.Show("No Dark Souls Detected");
-
-            }
-            
-#endif
+            if (DSR)
+                DS1Planner.Title = "Dark Souls: Remastered";
             Initialize(ExePath);
         }
 
@@ -111,12 +98,11 @@ namespace FromSoft_Game_Build_Planner
 
         private void Initialize(string exePath)
         {
-
-
-            var gameParamFile = $@"{exePath}\param\GameParam\GameParam.parambnd";
-            var paramDefFile = $@"{exePath}\paramdef\paramdef.paramdefbnd";
-            var itemFMGFile = $@"{exePath}\msg\ENGLISH\item.msgbnd";
-            var menuFMGFile = $@"{exePath}\msg\ENGLISH\menu.msgbnd";
+            var dcx = DSR ? ".dcx" : "";
+            var gameParamFile = $@"{exePath}\param\GameParam\GameParam.parambnd{dcx}";
+            var paramDefFile = $@"{exePath}\paramdef\paramdef.paramdefbnd{dcx}";
+            var itemFMGFile = $@"{exePath}\msg\ENGLISH\item.msgbnd{dcx}";
+            var menuFMGFile = $@"{exePath}\msg\ENGLISH\menu.msgbnd{dcx}";
             var paramBND = BND3.Read(gameParamFile);
             var paramDefBND = BND3.Read(paramDefFile);
             var itemFMGBND = BND3.Read(itemFMGFile);
@@ -186,7 +172,9 @@ namespace FromSoft_Game_Build_Planner
             {
                 var result = param.ApplyParamdefCarefully(paramDefs);
                 if (!result)
-                    Debug.WriteLine($"{param.ParamType} Did not apply!");
+                    foreach (var paramDef in paramDefs)
+                        if (paramDef.ParamType == param.ParamType && (param.DetectedSize == -1 || param.DetectedSize == paramDef.GetRowSize()))
+                            param.ApplyParamdef(paramDef);
             }
 
             foreach (var param in paramList)
@@ -217,6 +205,7 @@ namespace FromSoft_Game_Build_Planner
                     case "REINFORCE_PARAM_PROTECTOR_ST":
                         ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ;
                         break;
+                    
                     case "CACL_CORRECT_GRAPH_ST":
                         CalcCorrectGraph = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1CalcCorrect(x));
                         break;
@@ -273,12 +262,15 @@ namespace FromSoft_Game_Build_Planner
 
             var armorNames = ItemFMGS[2].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
-            foreach (var item in MenuFMGS[31].Entries)
+            if (!DSR)
             {
-                if (!armorNames.ContainsKey(item.ID))
-                    armorNames.Add(item.ID, item.Text);
-                else if (string.IsNullOrWhiteSpace(armorNames[item.ID]))
-                    armorNames[item.ID] = item.Text;
+                foreach (var item in MenuFMGS[31].Entries)
+                {
+                    if (!armorNames.ContainsKey(item.ID))
+                        armorNames.Add(item.ID, item.Text);
+                    else if (string.IsNullOrWhiteSpace(armorNames[item.ID]))
+                        armorNames[item.ID] = item.Text;
+                }
             }
 
             foreach (var armor in equipProParam.Rows)
@@ -310,22 +302,30 @@ namespace FromSoft_Game_Build_Planner
 
             //Make weaponNames dictionary
             var weaponNames = ItemFMGS[1].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
-            foreach (var item in MenuFMGS[29].Entries)
+            
+            if (!DSR)
             {
-                if (!weaponNames.ContainsKey(item.ID))
-                    weaponNames.Add(item.ID, item.Text);
-                else if (string.IsNullOrWhiteSpace(weaponNames[item.ID]))
-                    weaponNames[item.ID] = item.Text;
+                foreach (var item in MenuFMGS[29].Entries)
+                {
+                    if (!weaponNames.ContainsKey(item.ID))
+                        weaponNames.Add(item.ID, item.Text);
+                    else if (string.IsNullOrWhiteSpace(weaponNames[item.ID]))
+                        weaponNames[item.ID] = item.Text;
+                }
             }
 
             //Make weaponCategories dictionary
             var weaponCategories = ItemFMGS[11].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
-            foreach (var item in MenuFMGS[28].Entries)
+            if (!DSR)
             {
-                if (!weaponCategories.ContainsKey(item.ID))
-                    weaponCategories.Add(item.ID, item.Text);
-                else if (string.IsNullOrWhiteSpace(weaponCategories[item.ID]))
-                    weaponCategories[item.ID] = item.Text;
+                foreach (var item in MenuFMGS[28].Entries)
+                {
+                    if (!weaponCategories.ContainsKey(item.ID))
+                        weaponCategories.Add(item.ID, item.Text);
+                    else if (string.IsNullOrWhiteSpace(weaponCategories[item.ID]))
+                        weaponCategories[item.ID] = item.Text;
+                }
+
             }
 
             //Add Weapons to WeaponList
@@ -380,12 +380,16 @@ namespace FromSoft_Game_Build_Planner
 
             var itemNames = ItemFMGS[0].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
-            foreach (var item in MenuFMGS[25].Entries)
+            if (!DSR)
             {
-                if (!itemNames.ContainsKey(item.ID))
-                    itemNames.Add(item.ID, item.Text);
-                else if (string.IsNullOrWhiteSpace(itemNames[item.ID]))
-                    itemNames[item.ID] = item.Text;
+                foreach (var item in MenuFMGS[25].Entries)
+                {
+                    if (!itemNames.ContainsKey(item.ID))
+                        itemNames.Add(item.ID, item.Text);
+                    else if (string.IsNullOrWhiteSpace(itemNames[item.ID]))
+                        itemNames[item.ID] = item.Text;
+                }
+
             }
 
             foreach (var item in goodsParam.Rows)
@@ -418,12 +422,15 @@ namespace FromSoft_Game_Build_Planner
 
             var spellNames = ItemFMGS[4].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
-            foreach (var item in MenuFMGS[25].Entries)
+            if (!DSR)
             {
-                if (!spellNames.ContainsKey(item.ID))
-                    spellNames.Add(item.ID, item.Text);
-                else if (string.IsNullOrWhiteSpace(spellNames[item.ID]))
-                    spellNames[item.ID] = item.Text;
+                foreach (var item in MenuFMGS[25].Entries)
+                {
+                    if (!spellNames.ContainsKey(item.ID))
+                        spellNames.Add(item.ID, item.Text);
+                    else if (string.IsNullOrWhiteSpace(spellNames[item.ID]))
+                        spellNames[item.ID] = item.Text;
+                }
             }
 
             foreach (var spell in magicParam.Rows)
@@ -461,12 +468,15 @@ namespace FromSoft_Game_Build_Planner
 
             var ringNames = ItemFMGS[3].Entries.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => x.Text);
 
-            foreach (var item in MenuFMGS[27].Entries)
+            if (!DSR)
             {
-                if (!ringNames.ContainsKey(item.ID))
-                    ringNames.Add(item.ID, item.Text);
-                else if (string.IsNullOrWhiteSpace(ringNames[item.ID]))
-                    ringNames[item.ID] = item.Text;
+                foreach (var item in MenuFMGS[27].Entries)
+                {
+                    if (!ringNames.ContainsKey(item.ID))
+                        ringNames.Add(item.ID, item.Text);
+                    else if (string.IsNullOrWhiteSpace(ringNames[item.ID]))
+                        ringNames[item.ID] = item.Text;
+                }
             }
 
             foreach (var ring in accessoryParam.Rows)
@@ -638,10 +648,26 @@ namespace FromSoft_Game_Build_Planner
                         humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
                     var scalingDMG = intDMG;
                     fireAttack += scalingDMG + humanityScaling;
-                    var magAdjust = GetStatDamage(0, 0, intScaling, weapon.CorrectType, fireAttack);
+                    var magAdjust = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
                     txtFireAR.Text = ((int)fireAttack).ToString();
+                    txtMagAdj.Text = ((int)(100 + weapon.IntScaling)).ToString();
+                    return;
                 }
 
+                if (weapon.WeaponType == DS1Weapon.Type.SpellTool)
+                {
+                    var magAdj = 100f;
+                    var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
+                    var faiAdj = GetStatDamage(nudFai.Value, weapon.FaiRequired, faiScaling, weapon.CorrectType, magAdj);
+                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+                    var intAdj = GetStatDamage(nudInt.Value, weapon.IntRequired, intScaling, weapon.CorrectType, magAdj);
+                    var humanityScaling = 0f;
+                    if (weapon.HumanityScaling)
+                        humanityScaling = (float)GetHumanityDamage(faiAdj, intAdj, magicAttack); ;
+                    magAdj += faiAdj + intAdj + humanityScaling;
+                    txtMagAdj.Text = ((int)magAdj).ToString();
+                    return;
+                }
 
                 if (weapon.StrScaling > 0 || weapon.DexScaling > 0)
                 {
@@ -814,6 +840,15 @@ namespace FromSoft_Game_Build_Planner
         private void Reload_Click(object sender, RoutedEventArgs e)
         {
             Initialize(ExePath);
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var exePath = App.BrowseFiles();
+            UserSettings.LocalUserSettings.LastExePath = exePath;
+            var result = App.StartPlanner(exePath);
+            if (result)
+                Close();
         }
     }
 }
