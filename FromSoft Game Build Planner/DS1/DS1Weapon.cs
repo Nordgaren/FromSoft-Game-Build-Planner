@@ -111,8 +111,6 @@ namespace FromSoft_Game_Build_Planner
         {
             Name = weaponParam.Name;
 
-            if (Name.Contains("Rapier"))
-                Console.WriteLine();
             ID = weaponParam.ID;
             IconID = (ushort)weaponParam.Cells[47].Value;
 
