@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FromSoft_Game_Build_Planner
 {
-    class DS1Infusion
+    public class DS1Infusion
     {
         public string Name;
         public int Value;

@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 namespace FromSoft_Game_Build_Planner
 {
     
-    class DS1Armor
+    public class DS1Armor
     {
         public enum Slot
         {
+            None,
             Head,
             Body,
             Legs,
@@ -25,7 +26,13 @@ namespace FromSoft_Game_Build_Planner
             Armor = 2,
         }
 
+        public static List<DS1Armor> ArmorHead = new List<DS1Armor>();
+        public static List<DS1Armor> ArmorBody = new List<DS1Armor>();
+        public static List<DS1Armor> ArmorArms = new List<DS1Armor>();
+        public static List<DS1Armor> ArmorLegs = new List<DS1Armor>();
+
         public Slot ArmorSlot { get; set; }
+        public Upgrade UpgradePath { get; set; }
 
         public string Name { get; set; }
         public int ID { get; set; }
@@ -59,14 +66,15 @@ namespace FromSoft_Game_Build_Planner
         public ushort CurseResist { get; set; }
 
         public byte Gender { get; set; }
+        public int MaxUpgrade { get; set; }
 
-        public DS1Armor(PARAM.Row armorParam, Slot slot)
+        public DS1Armor(PARAM.Row armorParam)
         {
-            ArmorSlot = slot;
+            ArmorSlot = GetArmorSlot(armorParam);
 
             Name = armorParam.Name;
             ID = armorParam.ID;
-            
+
             Weight = (float)armorParam.Cells[8].Value;
             Poise = (short)armorParam.Cells[47].Value;
             PoiseRecover = (float)armorParam.Cells[14].Value;
@@ -86,7 +94,7 @@ namespace FromSoft_Game_Build_Planner
             FireDefense = (ushort)armorParam.Cells[51].Value;
             LightningDefense = (ushort)armorParam.Cells[52].Value;
 
-            SlashDefense= (short)armorParam.Cells[53].Value;
+            SlashDefense = (short)armorParam.Cells[53].Value;
             BlowDefense = (short)armorParam.Cells[54].Value;
             ThrustDefense = (short)armorParam.Cells[55].Value;
 
@@ -95,9 +103,56 @@ namespace FromSoft_Game_Build_Planner
             BleedResist = (ushort)armorParam.Cells[58].Value;
             CurseResist = (ushort)armorParam.Cells[59].Value;
 
+            for (int i = 16; i < 30; i++)
+            {
+                if ((int)armorParam.Cells[i].Value > -1)
+                    MaxUpgrade++;
+            }
+
+            if (MaxUpgrade > 5)
+                UpgradePath = Upgrade.Armor;
+            else if (MaxUpgrade == 0)
+                UpgradePath = Upgrade.None;
+            else 
+                UpgradePath = Upgrade.Unique;
+
+
+
             Gender = (byte)armorParam.Cells[66].Value;
+
+            switch (ArmorSlot)
+            {
+                case Slot.Head:
+                    ArmorHead.Add(this);
+                    break;
+                case Slot.Body:
+                    ArmorBody.Add(this);
+                    break;
+                case Slot.Legs:
+                    ArmorLegs.Add(this);
+                    break;
+                case Slot.Arms:
+                    ArmorArms.Add(this);
+                    break;
+                default:
+                    break;
+            }
         }
 
+        private Slot GetArmorSlot(PARAM.Row armorParam)
+        {
+            if ((byte)armorParam.Cells[74].Value == 0x1)
+                return Slot.Head;
+            else if ((byte)armorParam.Cells[75].Value == 0x1)
+                return Slot.Body;
+            else if ((byte)armorParam.Cells[76].Value == 0x1)
+                return Slot.Arms;
+            else if ((byte)armorParam.Cells[77].Value == 0x1)
+                return Slot.Legs;
+
+            return Slot.None;
+        }
+        
         public override string ToString()
         {
             return Name;

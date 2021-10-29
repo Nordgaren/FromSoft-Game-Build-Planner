@@ -40,8 +40,9 @@ namespace FromSoft_Game_Build_Planner
             DexMultiplier = (float)weapReinforceParam.Cells[8].Value;
             IntMultiplier = (float)weapReinforceParam.Cells[9].Value;
             FaiMultiplier = (float)weapReinforceParam.Cells[10].Value;
-
         }
+
+        public static Dictionary<int, DS1WeaponUpgrade> WeaponUpgrades = new Dictionary<int, DS1WeaponUpgrade>();
 
         public override string ToString()
         {

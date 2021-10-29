@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FromSoft_Game_Build_Planner
 {
-    class DS1Spell
+    public class DS1Spell
     {
         public enum Type
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FromSoft_Game_Build_Planner
 {
-    class DS1Class
+    public class DS1Class
     {
         public string Name { get; set; }
 
@@ -46,5 +46,8 @@ namespace FromSoft_Game_Build_Planner
         {
             return Name;
         }
+
+        public static List<DS1Class> Classes = new List<DS1Class>();
+
     }
 }

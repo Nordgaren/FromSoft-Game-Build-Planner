@@ -21,6 +21,20 @@ namespace FromSoft_Game_Build_Planner
     /// </summary>
     public partial class IntegerUpDown : UserControl
     {
+
+
+        public int BoundValue
+        {
+            get { return (int)GetValue(BoundValueProperty); }
+            set { _numValue = value; SetValue(BoundValueProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for BoundValue.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty BoundValueProperty =
+            DependencyProperty.Register("BoundValue", typeof(int), typeof(IntegerUpDown), new PropertyMetadata(0));
+
+
+
         private int _numValue = 0;
 
         public int Value

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FromSoft_Game_Build_Planner
 {
-    class ObservableObject : INotifyPropertyChanged
+    public class ObservableObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

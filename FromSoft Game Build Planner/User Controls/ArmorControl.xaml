@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="FromSoft_Game_Build_Planner.ArmorControl"
+             x:Name="ArmorCont"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FromSoft_Game_Build_Planner"
+             mc:Ignorable="d" 
+             d:DesignHeight="22" d:DesignWidth="400">
+    <Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <ComboBox x:Name="cmbArmor" Width="250" ItemsSource="{Binding ElementName=ArmorCont, Path=ArmorList, Mode=TwoWay}" SelectedItem="{Binding ElementName=ArmorCont, Path=Armor, Mode=TwoWay}" Loaded="cmbArmor_Loaded" SelectionChanged="cmbArmor_SelectionChanged"/>
+            <local:NumericBox x:Name="nudUpgrade" Value="{Binding ElementName=ArmorCont, Path=Upgrade, Mode=TwoWay}"/>
+            <CheckBox Margin="5" x:Name="Max" Content="Max" VerticalAlignment="Center" Foreground="White" Checked="Max_Checked" Unchecked="Max_Checked"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

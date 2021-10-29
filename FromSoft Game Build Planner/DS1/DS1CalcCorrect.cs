@@ -53,5 +53,8 @@ namespace FromSoft_Game_Build_Planner
             adjPt_MaxValGrow3 = (float)calcCorrectParam.Cells[13].Value;
             adjPt_MaxValGrow4 = (float)calcCorrectParam.Cells[14].Value;
         }
+
+        public static Dictionary<int, DS1CalcCorrect> CalcCorrectGraph;
+
     }
 }

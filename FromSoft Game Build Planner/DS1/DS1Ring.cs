@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FromSoft_Game_Build_Planner
 {
-    class DS1Ring
+    public class DS1Ring
     {
         public string Name { get; set; }
         public int ID { get; set; }

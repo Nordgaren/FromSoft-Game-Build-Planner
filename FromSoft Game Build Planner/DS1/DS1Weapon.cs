@@ -9,6 +9,11 @@ namespace FromSoft_Game_Build_Planner
 {
     public class DS1Weapon
     {
+        public static List<DS1Weapon> WeaponsList = new List<DS1Weapon>();
+        public static List<DS1Weapon> BoltList = new List<DS1Weapon>();
+        public static List<DS1Weapon> ArrowList = new List<DS1Weapon>();
+        public static Dictionary<int, DS1Weapon> Weapons = new Dictionary<int, DS1Weapon>();
+
         public enum Type
         {
             Dagger,
@@ -172,6 +177,37 @@ namespace FromSoft_Game_Build_Planner
             SetMaxUpgrade(weaponParam);
 
             SetUpgradePath();
+
+            MakeLists();
+        }
+
+        private void MakeLists()
+        {
+            if (CategoryName == null)
+                return;
+
+            Weapons.Add(ID, this);
+
+            if (Name.Contains("+"))
+                return;
+
+            if (UpgradePath == Upgrade.Infused)
+                return;
+
+            switch (WeaponType)
+            {
+                case Type.Arrow:
+                    ArrowList.Add(this);
+                    break;
+                case Type.Bolt:
+                    BoltList.Add(this);
+                    break;
+                default:
+                    WeaponsList.Add(this);
+                    break;
+            }
+
+            WeaponsList = WeaponsList.GroupBy(x => x.Name).Select(x => x.First()).OrderBy(x => x.CategoryName).OrderBy(x => x.ID != 900000).ToList();
         }
 
         private void SetUpgradePath()
@@ -338,6 +374,21 @@ namespace FromSoft_Game_Build_Planner
                 return $"{ID} {Name}";
             else
                 return $"{Name}";
+        }
+
+        public static DS1Weapon GetWeapon(DS1Weapon weapon, DS1Infusion infusion, int upgrade)
+        {
+            if (weapon == null)
+                return null;
+
+            if (infusion == null)
+                infusion = DS1Infusion.All[0];
+            
+            weapon = Weapons[weapon.ID + infusion.Value];
+            if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+                weapon = Weapons[weapon.ID + (upgrade * 100)];
+
+            return weapon;
         }
     }
 }
