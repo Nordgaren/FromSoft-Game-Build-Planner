@@ -26,14 +26,14 @@ namespace FromSoft_Game_Build_Planner
     /// <summary>
     /// Interaction logic for DarkSouls1.xaml
     /// </summary>
-    public partial class DarkSouls1 : Window
+    public partial class DarkSouls1 : UserControl
     {
 
         private int SoulLevel;
 
         bool DSR = false;
 
-        string ExePath;
+        public static string ExePath;
 
         //public DS1Character Chr = new DS1Character();
 
@@ -42,16 +42,12 @@ namespace FromSoft_Game_Build_Planner
 
             DSR = dsr;
             ExePath = exePath;
-            if (DSR)
-                DS1Planner.Title = "Dark Souls: Remastered";
+            //if (DSR)
+            //    DS1Planner.Title = "Dark Souls: Remastered";
 
             //DataContext = Chr;
-            
             Initialize(ExePath);
-            HeadList = new(DS1Armor.ArmorHead);
-            BodyList = new(DS1Armor.ArmorBody);
-            ArmsList = new(DS1Armor.ArmorArms);
-            LegsList = new(DS1Armor.ArmorLegs);
+            
             InitializeComponent();
 
             //wcRH1.SetChr(Chr);
@@ -64,58 +60,14 @@ namespace FromSoft_Game_Build_Planner
             //wcLH2.CalculatAR();
         }
 
-        public ObservableCollection<DS1Armor> HeadList { get; set; }
-        public ObservableCollection<DS1Armor> BodyList { get; set; }
-        public ObservableCollection<DS1Armor> ArmsList { get; set; }
-        public ObservableCollection<DS1Armor> LegsList { get; set; }
+        
 
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-                DragMove();
-        }
+       
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void Minimize_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        //PARAM EquipProParam;
-        //PARAM EquipWepParam;
-        //PARAM MagicParam;
-        //PARAM GoodsParam;
-        //PARAM AccessoryParam; //Rings
-        //PARAM CharInitParam;
-        //PARAM ReinforceParamProt;
-        //PARAM ReinforceParamWeap;
+        
 
         List<FMG> ItemFMGS;
         List<FMG> MenuFMGS;
-
-        //Armor
-
-        //Weapons
-        //List<DS1Weapon> WeaponDagger = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponWhip = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponSword = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponRapier = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponCurved = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponAxe = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponBlunt = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponSpear = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponHalberd = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponSpellTool = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponFist = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponBow = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponCrossbow = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponShield = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponArrow = new List<DS1Weapon>();
-        //List<DS1Weapon> WeaponBolt = new List<DS1Weapon>();
 
         //Spells
         List<DS1Spell> Sorceries;
@@ -126,7 +78,7 @@ namespace FromSoft_Game_Build_Planner
         List<DS1Item> Consumables;
         //Rings
         List<DS1Ring> Rings;
-        //Classes
+
         //Weapon Upgrades
         Dictionary<int, DS1ArmorUpgrade> ArmorUpgrades;
         Dictionary<string, TPF> Textures;
@@ -539,64 +491,19 @@ namespace FromSoft_Game_Build_Planner
 
         public static bool NotLoading = false;
 
-        //private void RecalculateStats()
-        //{
-        //    var vitality = nudVit.Value;
-        //    var attunement = nudAtt.Value;
-        //    var endurance = nudEnd.Value;
-        //    var strength = nudStr.Value;
-        //    var dexterity = nudDex.Value;
-        //    var resistance = nudRes.Value;
-        //    var intelligence = nudInt.Value;
-        //    var faith = nudFai.Value;
-        //    var sl = CalculateSL(vitality, attunement, endurance, strength, dexterity, resistance, intelligence, faith);
-
-        //    //txtSoulLevel.Text = sl.ToString();
-
-        //}
-
-        //private int CalculateSL(int vitality, int attunement, int endurance, int strength, int dexterity, int resistance, int intelligence, int faith)
-        //{
-        //    Chr.Class = cmbClass.SelectedItem as DS1Class;
-
-        //    if (Chr.Class == null)
-        //        return 0;
-
-        //    int sl = Chr.Class.SoulLevel;
-        //    sl += vitality - Chr.Class.BaseVit;
-        //    sl += attunement - Chr.Class.BaseAtt;
-        //    sl += endurance - Chr.Class.BaseEnd;
-        //    sl += strength - Chr.Class.BaseStr;
-        //    sl += dexterity - Chr.Class.BaseDex;
-        //    sl += resistance - Chr.Class.BaseRes;
-        //    sl += intelligence - Chr.Class.BaseInt;
-        //    sl += faith - Chr.Class.BaseFai;
-        //    return sl;
-
-        //}
-
-        private void nud_ValueChanged(object sender, RoutedEventArgs e)
+        private void DS1Planner_Loaded(object sender, RoutedEventArgs e)
         {
-            //RecalculateStats();
+            Window.GetWindow(this) // get the parent window
+               .Closing += (s1, e1) => CloseControl();
+            //if (UserSettings.LocalUserSettings.LastDS1Character != null)
+            //    ViewModel.Chr = UserSettings.LocalUserSettings.LastDS1Character;
 
-            //wcRH1.CalculatAR();
-            //wcRH2.CalculatAR();
-            //wcLH1.CalculatAR();
-            //wcLH2.CalculatAR();
         }
 
-        private void Reload_Click(object sender, RoutedEventArgs e)
+        private void CloseControl()
         {
-            Initialize(ExePath);
+            UserSettings.LocalUserSettings.LastDS1Character = ViewModel.Chr;
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            var exePath = App.BrowseFiles();
-            UserSettings.LocalUserSettings.LastExePath = exePath;
-            var result = App.StartPlanner(exePath);
-            if (result)
-                Close();
-        }
     }
 }

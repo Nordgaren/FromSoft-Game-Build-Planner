@@ -47,7 +47,7 @@ namespace FromSoft_Game_Build_Planner
 
         public int MaxEquip { get { return 40 + Endurance; } }
 
-        public string EquipPercent { get { return (EquipLoad / MaxEquip * 100).ToString(); } }
+        public string EquipPercent { get { return (EquipLoad / MaxEquip * 100).ToString("N2"); } }
 
         public int AttunementSlots { get; set; }
 
@@ -453,11 +453,6 @@ namespace FromSoft_Game_Build_Planner
         }
         #endregion
 
-        //public DS1Weapon LHandWeapon2 { get; set; }
-        //public DS1Infusion LHandInfusion2 { get; set; }
-        //public int LHandUpgrade2 { get; set; }
-        //public bool LHand2H_2 { get; set; }
-
         public DS1Armor Head { get; set; }
         public DS1Armor Body { get; set; }
         public DS1Armor Arms { get; set; }
@@ -485,13 +480,6 @@ namespace FromSoft_Game_Build_Planner
         public DS1Spell Spell11 { get; set; }
         public DS1Spell Spell12 { get; set; }
 
-        public ObservableCollection<DS1Class> Classes { get; set; }
-
-        public DS1Character()
-        {
-            Classes = new ObservableCollection<DS1Class>(DS1Class.Classes);
-        }
-
         private int CalculateSL()
         {
             int sl = Class.SoulLevel;
@@ -504,6 +492,11 @@ namespace FromSoft_Game_Build_Planner
             sl += Intelligence - Class.BaseInt;
             sl += Faith - Class.BaseFai;
             return sl;
+        }
+
+        public void LoadChr()
+        {
+            
         }
 
         public DS1DamageModel CalculatAR(DS1Weapon weapon, DS1Infusion infusion, int upgrade, bool _2h)

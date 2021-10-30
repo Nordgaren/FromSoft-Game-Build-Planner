@@ -112,6 +112,8 @@ namespace FromSoft_Game_Build_Planner
         public Type WeaponType { get; set; }
         public bool ShowID { get; private set; } = false;
 
+        public DS1Weapon() { }
+
         public DS1Weapon(PARAM.Row weaponParam, string categoryName)
         {
             Name = weaponParam.Name;

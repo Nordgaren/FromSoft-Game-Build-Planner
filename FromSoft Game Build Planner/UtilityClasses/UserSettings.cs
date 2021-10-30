@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,21 +12,29 @@ namespace FromSoft_Game_Build_Planner
     class UserSettings
     {
         public static UserSettings LocalUserSettings = new UserSettings();
+        
+        private static string SettingsPath = $@"{MainWindow.ExeDir}\BuildPlannerSettings.json";
 
         public string LastExePath;
 
         public DS1Character LastDS1Character;
 
-        public void Save(string path)
+        public void Save()
         {
             var jsonString = JsonConvert.SerializeObject(LocalUserSettings, Formatting.Indented);
-            File.WriteAllText(path, jsonString);
+            File.WriteAllText(SettingsPath, jsonString);
         }
 
-        public static UserSettings GetUserSettings(string path)
+        public static UserSettings GetUserSettings()
         {
-            var jsonString = File.ReadAllText(path);
+            var jsonString = File.ReadAllText(SettingsPath);
             return JsonConvert.DeserializeObject<UserSettings>(jsonString);
         }
+
+        public static string UserSettingsPath()
+        {
+            return SettingsPath;
+        }
+
     }
 }

@@ -232,9 +232,10 @@ namespace FromSoft_Game_Build_Planner
 
         private void txtStats_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            StatState++;
-            SetWeaponStatText();
+            if (Damage.Useable)
+                StatState++;
 
+            SetWeaponStatText();
         }
 
         private void SetWeaponStatText()

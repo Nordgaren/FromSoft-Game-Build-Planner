@@ -24,6 +24,8 @@ namespace FromSoft_Game_Build_Planner
 
         public byte StartingHumanity { get; set; }
 
+        public DS1Class() { }
+
         public DS1Class(PARAM.Row classParam)
         {
             Name = classParam.Name;

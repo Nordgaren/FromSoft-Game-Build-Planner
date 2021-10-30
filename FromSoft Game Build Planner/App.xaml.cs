@@ -17,116 +17,63 @@ namespace FromSoft_Game_Build_Planner
     /// </summary>
     public partial class App : Application
     {
-        public static string ExeDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-
-        private string SettingsPath = $@"{ExeDir}\BuildPlannerSettings.json";
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            if (File.Exists(SettingsPath))
-                UserSettings.LocalUserSettings = UserSettings.GetUserSettings(SettingsPath);
+            //var settingsPath = UserSettings.UserSettingsPath();
 
-            var exePath = UserSettings.LocalUserSettings.LastExePath;
-            bool result;
-            if (string.IsNullOrWhiteSpace(exePath))
-            {
-                exePath = BrowseFiles();
-                result = StartPlanner(exePath);
-            }
-            else
-            {
-                result = StartPlanner(exePath);
-            }
+            //if (File.Exists(settingsPath))
+            //    UserSettings.LocalUserSettings = UserSettings.GetUserSettings();
 
-            if (!result)
-                Shutdown();
+            //var exePath = UserSettings.LocalUserSettings.LastExePath;
+            //bool result;
+            //if (string.IsNullOrWhiteSpace(exePath))
+            //{
+            //    exePath = BrowseFiles();
+            //    result = StartPlanner(exePath);
+            //}
+            //else
+            //{
+            //    result = StartPlanner(exePath);
+            //}
+
+            //if (!result)
+            //    Shutdown();
         }
 
-        public static string BrowseFiles()
-        {
-            var ofd = new OpenFileDialog();
-
-            var result = ofd.ShowDialog();
-
-            if (result.HasValue)
-            {
-                return ofd.FileName;
-            }
-
-            return null;
-        }
-
+        //Global event handler memes
         protected override void OnStartup(StartupEventArgs e)
-
         {
-
             EventManager.RegisterClassHandler(typeof(TextBox), TextBox.GotFocusEvent, new RoutedEventHandler(TextBox_GotFocus));
 
             EventManager.RegisterClassHandler(typeof(TextBox), TextBox.PreviewMouseDownEvent, new RoutedEventHandler(TextBox_PreviewMouseDown));
 
             base.OnStartup(e);
-
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-
         {
-
             (sender as TextBox).SelectAll();
 
         }
 
         private void TextBox_PreviewMouseDown(object sender, RoutedEventArgs e)
-
         {
-
             TextBox textBox = sender as TextBox;
 
             if (!textBox.IsFocused)
-
             {
-
                 textBox.Focus();
 
                 textBox.SelectAll();
 
                 e.Handled = true;
-
-            }
-
-        }
-
-        public static bool StartPlanner(string exePath)
-        {
-            if (exePath.EndsWith("DARKSOULS.exe"))
-            {
-                UserSettings.LocalUserSettings.LastExePath = exePath;
-                var DS1 = new DarkSouls1(System.IO.Path.GetDirectoryName(exePath), false);
-                DS1.Show();
-                return true;
-            }
-            else if (exePath.EndsWith("DarkSoulsRemastered.exe"))
-            {
-                UserSettings.LocalUserSettings.LastExePath = exePath;
-                var DS1R = new DarkSouls1(System.IO.Path.GetDirectoryName(exePath), true);
-                DS1R.Show();
-                return true;
-            }
-            else if (string.IsNullOrWhiteSpace(exePath))
-            {
-                return false;
-            }
-            else
-            {
-                MessageBox.Show("No Supported game detected");
-                exePath = BrowseFiles();
-                return StartPlanner(exePath);
             }
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            UserSettings.LocalUserSettings.Save(SettingsPath);
+            UserSettings.LocalUserSettings.Save();
             Shutdown();
         }
     }

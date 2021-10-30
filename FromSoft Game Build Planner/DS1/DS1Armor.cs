@@ -68,6 +68,8 @@ namespace FromSoft_Game_Build_Planner
         public byte Gender { get; set; }
         public int MaxUpgrade { get; set; }
 
+        public DS1Armor() { }
+
         public DS1Armor(PARAM.Row armorParam)
         {
             ArmorSlot = GetArmorSlot(armorParam);
