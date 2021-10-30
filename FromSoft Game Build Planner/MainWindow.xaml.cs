@@ -29,8 +29,8 @@ namespace FromSoft_Game_Build_Planner
             InitializeComponent();
         }
 
-        static UserControl Content;
-        static string Name;
+        static UserControl CurrentPlanner;
+        static string GameName;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -54,8 +54,8 @@ namespace FromSoft_Game_Build_Planner
             if (!result)
                 Close();
 
-            WindowTitle.Text = Name;
-            MainWindowContent.Content = Content;
+            WindowTitle.Text = GameName;
+            MainWindowContent.Content = CurrentPlanner;
         }
 
         public static string BrowseFiles()
@@ -78,16 +78,16 @@ namespace FromSoft_Game_Build_Planner
             {
                 UserSettings.LocalUserSettings.LastExePath = exePath;
                 var DS1 = new DarkSouls1(System.IO.Path.GetDirectoryName(exePath), false);
-                Name = "Dark Souls 1";
-                Content = DS1;
+                GameName = "Dark Souls 1";
+                CurrentPlanner = DS1;
                 return true;
             }
             else if (exePath.EndsWith("DarkSoulsRemastered.exe"))
             {
                 UserSettings.LocalUserSettings.LastExePath = exePath;
                 var DS1R = new DarkSouls1(System.IO.Path.GetDirectoryName(exePath), true);
-                Name = "Dark Souls Remastered";
-                Content = DS1R;
+                GameName = "Dark Souls Remastered";
+                CurrentPlanner = DS1R;
                 return true;
             }
             else if (string.IsNullOrWhiteSpace(exePath))
