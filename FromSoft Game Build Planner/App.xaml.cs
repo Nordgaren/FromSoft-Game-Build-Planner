@@ -17,30 +17,6 @@ namespace FromSoft_Game_Build_Planner
     /// </summary>
     public partial class App : Application
     {
-
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            //var settingsPath = UserSettings.UserSettingsPath();
-
-            //if (File.Exists(settingsPath))
-            //    UserSettings.LocalUserSettings = UserSettings.GetUserSettings();
-
-            //var exePath = UserSettings.LocalUserSettings.LastExePath;
-            //bool result;
-            //if (string.IsNullOrWhiteSpace(exePath))
-            //{
-            //    exePath = BrowseFiles();
-            //    result = StartPlanner(exePath);
-            //}
-            //else
-            //{
-            //    result = StartPlanner(exePath);
-            //}
-
-            //if (!result)
-            //    Shutdown();
-        }
-
         //Global event handler memes
         protected override void OnStartup(StartupEventArgs e)
         {

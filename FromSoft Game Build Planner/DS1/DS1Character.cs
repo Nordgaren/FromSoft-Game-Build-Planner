@@ -501,104 +501,99 @@ namespace FromSoft_Game_Build_Planner
 
         public DS1DamageModel CalculatAR(DS1Weapon weapon, DS1Infusion infusion, int upgrade, bool _2h)
         {
-            if (DarkSouls1.NotLoading)
+            weapon = DS1Weapon.GetWeapon(weapon, infusion, upgrade);
+
+            if (weapon == null)
+                return new DS1DamageModel();
+
+            var damage = new DS1DamageModel();
+            var strength = _2h ? Strength * 2 : Strength;
+
+            if (strength < weapon.StrRequired || Dexterity < weapon.DexRequired || Intelligence < weapon.IntRequired || Faith < weapon.FaiRequired)
+                return damage;
+
+            damage.Useable = true;
+
+            var infusionID = 000;
+            if (infusion != null)
+                infusionID = infusion.Value;
+
+            var multiplier = DS1WeaponUpgrade.WeaponUpgrades[infusionID + upgrade];
+
+            var physAttack = weapon.PhysicalAttack * multiplier.PhysicalMutliplier;
+            var magicAttack = weapon.MagicAttack * multiplier.MagicMutliplier;
+            var fireAttack = weapon.FireAttack * multiplier.FireMutliplier;
+            var lightAttack = weapon.LightningAttack * multiplier.LightningMutliplier;
+
+            damage.PhysAR = (int)physAttack;
+            damage.MagAR = (int)magicAttack;
+            damage.FireAR = (int)fireAttack;
+            damage.LightAR = (int)lightAttack;
+            damage.TotalAR = 0;
+            damage.MagAdjust = 0;
+
+
+            if (weapon.WeaponType == DS1Weapon.Type.SpellTool)
             {
-                weapon = DS1Weapon.GetWeapon(weapon, infusion, upgrade);
-
-                if (weapon == null)
-                    return new DS1DamageModel();
-
-                var damage = new DS1DamageModel();
-                var strength = _2h ? Strength * 2 : Strength;
-
-                if (strength < weapon.StrRequired || Dexterity < weapon.DexRequired || Intelligence < weapon.IntRequired || Faith < weapon.FaiRequired)
-                    return damage;
-
-                damage.Useable = true;
-
-                var infusionID = 000;
-                if (infusion != null)
-                    infusionID = infusion.Value;
-
-                var multiplier = DS1WeaponUpgrade.WeaponUpgrades[infusionID + upgrade];
-
-                var physAttack = weapon.PhysicalAttack * multiplier.PhysicalMutliplier;
-                var magicAttack = weapon.MagicAttack * multiplier.MagicMutliplier;
-                var fireAttack = weapon.FireAttack * multiplier.FireMutliplier;
-                var lightAttack = weapon.LightningAttack * multiplier.LightningMutliplier;
-
-                damage.PhysAR = (int)physAttack;
-                damage.MagAR = (int)magicAttack;
-                damage.FireAR = (int)fireAttack;
-                damage.LightAR = (int)lightAttack;
-                damage.TotalAR = 0;
-                damage.MagAdjust = 0;
-
-
-                if (weapon.WeaponType == DS1Weapon.Type.SpellTool)
-                {
-                    var magAdj = 100f;
-                    var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
-                    var faiAdj = GetStatDamage(Faith, weapon.FaiRequired, faiScaling, weapon.CorrectType, magAdj);
-                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
-                    var intAdj = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, magAdj);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(faiAdj, intAdj, magicAttack); ;
-                    magAdj += faiAdj + intAdj + humanityScaling;
-                    damage.MagAdjust = (int)magAdj;
-                    return damage;
-                }
-
-                if (weapon.StrScaling > 0 || weapon.DexScaling > 0)
-                {
-                    //var str = 
-                    var strScaling = weapon.StrScaling * multiplier.StrMultiplier;
-                    var dexScaling = weapon.DexScaling * multiplier.DexMultiplier;
-                    var strDMG = GetStatDamage(strength, weapon.StrRequired, strScaling, weapon.CorrectType, physAttack);
-                    var dexDMG = GetStatDamage(Dexterity, weapon.DexRequired, dexScaling, weapon.CorrectType, physAttack);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(strDMG, dexDMG, magicAttack);
-                    var scalingDMG = strDMG + dexDMG;
-                    physAttack += scalingDMG;
-                    damage.PhysAR = (int)physAttack;
-                }
-
-                if (weapon.IntScaling > 0 || weapon.FaiScaling > 0)
-                {
-                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
-                    var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
-                    var intDMG = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, magicAttack);
-                    var faiDMG = GetStatDamage(Faith, weapon.FaiRequired, faiScaling, weapon.CorrectType, magicAttack);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(intDMG, faiDMG, magicAttack);
-                    var scalingDMG = intDMG + faiDMG;
-                    magicAttack += scalingDMG + humanityScaling;
-                    damage.MagAR = (int)magicAttack;
-                }
-
-                if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
-                {
-                    var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
-                    var intDMG = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
-                    var humanityScaling = 0f;
-                    if (weapon.HumanityScaling)
-                        humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
-                    var scalingDMG = intDMG;
-                    fireAttack += scalingDMG + humanityScaling;
-                    var magAdjust = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
-                    damage.FireAR = (int)fireAttack;
-                    damage.MagAdjust = (int)(100 + weapon.IntScaling);
-                    return damage;
-                }
-
-                damage.TotalAR = (int)(physAttack + magicAttack + fireAttack + lightAttack);
+                var magAdj = 100f;
+                var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
+                var faiAdj = GetStatDamage(Faith, weapon.FaiRequired, faiScaling, weapon.CorrectType, magAdj);
+                var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+                var intAdj = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, magAdj);
+                var humanityScaling = 0f;
+                if (weapon.HumanityScaling)
+                    humanityScaling = (float)GetHumanityDamage(faiAdj, intAdj, magicAttack); ;
+                magAdj += faiAdj + intAdj + humanityScaling;
+                damage.MagAdjust = (int)magAdj;
                 return damage;
             }
 
-            return new DS1DamageModel();
+            if (weapon.StrScaling > 0 || weapon.DexScaling > 0)
+            {
+                //var str = 
+                var strScaling = weapon.StrScaling * multiplier.StrMultiplier;
+                var dexScaling = weapon.DexScaling * multiplier.DexMultiplier;
+                var strDMG = GetStatDamage(strength, weapon.StrRequired, strScaling, weapon.CorrectType, physAttack);
+                var dexDMG = GetStatDamage(Dexterity, weapon.DexRequired, dexScaling, weapon.CorrectType, physAttack);
+                var humanityScaling = 0f;
+                if (weapon.HumanityScaling)
+                    humanityScaling = (float)GetHumanityDamage(strDMG, dexDMG, magicAttack);
+                var scalingDMG = strDMG + dexDMG;
+                physAttack += scalingDMG;
+                damage.PhysAR = (int)physAttack;
+            }
+
+            if (weapon.IntScaling > 0 || weapon.FaiScaling > 0)
+            {
+                var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+                var faiScaling = weapon.FaiScaling * multiplier.FaiMultiplier;
+                var intDMG = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, magicAttack);
+                var faiDMG = GetStatDamage(Faith, weapon.FaiRequired, faiScaling, weapon.CorrectType, magicAttack);
+                var humanityScaling = 0f;
+                if (weapon.HumanityScaling)
+                    humanityScaling = (float)GetHumanityDamage(intDMG, faiDMG, magicAttack);
+                var scalingDMG = intDMG + faiDMG;
+                magicAttack += scalingDMG + humanityScaling;
+                damage.MagAR = (int)magicAttack;
+            }
+
+            if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+            {
+                var intScaling = weapon.IntScaling * multiplier.IntMultiplier;
+                var intDMG = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
+                var humanityScaling = 0f;
+                if (weapon.HumanityScaling)
+                    humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
+                var scalingDMG = intDMG;
+                fireAttack += scalingDMG + humanityScaling;
+                var magAdjust = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
+                damage.FireAR = (int)fireAttack;
+                damage.MagAdjust = (int)(100 + weapon.IntScaling);
+                return damage;
+            }
+
+            damage.TotalAR = (int)(physAttack + magicAttack + fireAttack + lightAttack);
+            return damage;
         }
 
         float GetStatDamage(int stat, int statRequired, float statScaling, int correctType, float typeAttack)

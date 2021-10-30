@@ -29,8 +29,8 @@ namespace FromSoft_Game_Build_Planner
             InitializeComponent();
         }
 
-        static UserControl CurrentPlanner;
-        static string GameName;
+        private static UserControl CurrentPlanner;
+        private static string GameName;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
