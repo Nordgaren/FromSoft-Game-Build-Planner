@@ -3,6 +3,7 @@ using SoulsFormats;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,12 +28,11 @@ namespace FromSoft_Game_Build_Planner
         public ObservableCollection<DS1Armor> ArmsList { get; set; }
         public ObservableCollection<DS1Armor> LegsList { get; set; }
 
-        private bool DSR;
+        public static bool DSR { get; set; }
 
         public DS1ViewModel()
         {
-            DSR = DarkSouls1.DSR;
-            Initialize(DarkSouls1.ExePath);
+            Initialize(UserSettings.LocalUserSettings.LastExePath);
 
             Chr = new DS1Character();
             Classes = new(DS1Class.Classes);
@@ -62,11 +62,12 @@ namespace FromSoft_Game_Build_Planner
 
         private void Initialize(string exePath)
         {
-            var dcx = DarkSouls1.DSR ? ".dcx" : "";
-            var gameParamFile = $@"{exePath}\param\GameParam\GameParam.parambnd{dcx}";
-            var paramDefFile = $@"{exePath}\paramdef\paramdef.paramdefbnd{dcx}";
-            var itemFMGFile = $@"{exePath}\msg\ENGLISH\item.msgbnd{dcx}";
-            var menuFMGFile = $@"{exePath}\msg\ENGLISH\menu.msgbnd{dcx}";
+            var exeDir = Path.GetDirectoryName(exePath);
+            var dcx = DSR ? ".dcx" : "";
+            var gameParamFile = $@"{exeDir}\param\GameParam\GameParam.parambnd{dcx}";
+            var paramDefFile = $@"{exeDir}\paramdef\paramdef.paramdefbnd{dcx}";
+            var itemFMGFile = $@"{exeDir}\msg\ENGLISH\item.msgbnd{dcx}";
+            var menuFMGFile = $@"{exeDir}\msg\ENGLISH\menu.msgbnd{dcx}";
             var paramBND = BND3.Read(gameParamFile);
             var paramDefBND = BND3.Read(paramDefFile);
             var itemFMGBND = BND3.Read(itemFMGFile);
