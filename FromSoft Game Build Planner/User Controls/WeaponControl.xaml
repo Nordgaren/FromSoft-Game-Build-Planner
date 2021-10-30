@@ -5,15 +5,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FromSoft_Game_Build_Planner"
-             mc:Ignorable="d" Height="70" Width="185" >
+             mc:Ignorable="d" Height="70" Width="185" Loaded="WepControl_Loaded" >
     <Grid >
-        <StackPanel Loaded="StackPanel_Loaded">
+        <StackPanel>
             <TextBlock x:Name="txtStats" Foreground="White" MinWidth="75" PreviewMouseDown="txtStats_PreviewMouseDown" HorizontalAlignment="Center" TextAlignment="Center" />
             <StackPanel Orientation="Horizontal">
                 <StackPanel >
                     <DockPanel>
                     </DockPanel>
-                    <ComboBox x:Name="cmbWeapon" SelectedItem="{Binding ElementName=WepControl, Path=Weapon, Mode=TwoWay}" x:FieldModifier="public" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="139" SelectionChanged="cmbWeapon_SelectionChanged" IsEditable="False" IsTextSearchEnabled="False" TextBoxBase.TextChanged="cmbWeapon_TextChanged" DropDownOpened="cmbWeapon_DropDownOpened" ItemsSource="{Binding ElementName=WepControl, Path=WeaponListCollectionView}">
+                    <ComboBox x:Name="cmbWeapon" StaysOpenOnEdit="True" SelectedItem="{Binding ElementName=WepControl, Path=Weapon, Mode=TwoWay}" ItemsSource="{Binding ElementName=WepControl, Path=WeaponListCollectionView}" x:FieldModifier="public" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="139" SelectionChanged="cmbWeapon_SelectionChanged" IsEditable="False" IsTextSearchEnabled="False" PreviewTextInput="cmbWeapon_PreviewTextInput" TextBoxBase.TextChanged="cmbWeapon_TextChanged" DropDownOpened="cmbWeapon_DropDownOpened" DropDownClosed="cmbWeapon_DropDownClosed" >
                         <ComboBox.GroupStyle>
                             <GroupStyle>
                                 <GroupStyle.HeaderTemplate>

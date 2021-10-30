@@ -27,8 +27,11 @@ namespace FromSoft_Game_Build_Planner
             InitializeComponent();
             WeaponListCollectionView = new ListCollectionView(DS1Weapon.WeaponsList);
             WeaponListCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("CategoryName"));
+            //WeaponListCollectionView.Filter += FilterWeapons;
             cmbWeapon.ItemsSource = WeaponListCollectionView;
         }
+
+        public ICollectionView WeaponListCollectionView { get; private set; }
 
         public string ControlName
         {
@@ -175,38 +178,54 @@ namespace FromSoft_Game_Build_Planner
             }
         }
 
-        public ICollectionView WeaponListCollectionView { get; private set; }
-
-        private void txtWeapon_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-            //WeaponListCollectionView.Filter = FilterDS1Weapon.Weapons;
-            //cmbWeapon.ItemsSource = WeaponListCollectionView;
-            //cmbWeapon.SelectedIndex = 0;
-        }
 
         private bool FilterWeapons(object obj)
         {
-            if (cmbWeapon.IsDropDownOpen)
-            {
-                if (obj is CategorizedItem item)
-                    return item.Name.Contains(cmbWeapon.Text, StringComparison.InvariantCultureIgnoreCase) || item.Category.Contains(cmbWeapon.Text, StringComparison.InvariantCultureIgnoreCase);
+            //if (cmbWeapon.IsDropDownOpen)
+            //{
+            //    if (obj is CategorizedItem item)
+            //        return item.Name.Contains(cmbWeapon.Text, StringComparison.InvariantCultureIgnoreCase) || item.Category.Contains(cmbWeapon.Text, StringComparison.InvariantCultureIgnoreCase);
 
-                return false;
-            }
-            else
-                return true;
+            //    return false;
+            //}
+            //else
+            //    return true;
+            return true;
         }
 
         private void cmbWeapon_TextChanged(object sender, TextChangedEventArgs e)
         {
             //if (cmbWeapon.IsDropDownOpen)
-            //    cmbWeapon.ItemsSource = WeaponListCollectionView;
+            //    WeaponListCollectionView.Refresh();
+
+            if (string.IsNullOrWhiteSpace(cmbWeapon.Text))
+                cmbWeapon.ItemsSource = WeaponListCollectionView;
+            else
+            {
+                var newList = DS1Weapon.WeaponsList.Where(w => w.Name.ToLower().Contains(cmbWeapon.Text)).ToList();
+                var newWeaponListCollectionView = new ListCollectionView(newList);
+                newWeaponListCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("CategoryName"));
+                cmbWeapon.ItemsSource = newWeaponListCollectionView;
+            }
+        }
+
+        private void cmbWeapon_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            
+
         }
 
         private void cmbWeapon_DropDownOpened(object sender, EventArgs e)
         {
+            //cmbWeapon.IsEditable = true;
             cmbWeapon.Text = "";
+        }
+
+        private void cmbWeapon_DropDownClosed(object sender, EventArgs e)
+        {
+            //cmbWeapon.IsEditable = false;
+            if (Weapon != null)
+                cmbWeapon.Text = Weapon.Name;
         }
 
         int StatState = 0;
@@ -223,31 +242,40 @@ namespace FromSoft_Game_Build_Planner
             if (Damage == null)
                 return;
 
-            switch (StatState % 4)
+            if (Damage.Useable)
             {
-                case 0:
-                    txtStats.Text = $@"Total AR: {Damage.TotalAR}";
-                    break;
-                case 1:
-                    ARColors();
-                    break;
-                case 2:
-                    txtStats.Text = $@"Mag Adjust: {Damage.MagAdjust}";
-                    break;
-                case 3:
-                    DefColors();
-                    break;
-                default:
-                    break;
+                switch (StatState % 4)
+                {
+                    case 0:
+                        txtStats.Text = $@"Total AR: {Damage.TotalAR}";
+                        break;
+                    case 1:
+                        ARColors();
+                        break;
+                    case 2:
+                        txtStats.Text = $@"Mag Adjust: {Damage.MagAdjust}";
+                        break;
+                    case 3:
+                        DefColors();
+                        break;
+                    default:
+                        break;
+                }
             }
+            else
+            {
+                txtStats.Inlines.Clear();
+                txtStats.Inlines.Add(new Run(@"Unusable") { Foreground = Brushes.Red });
+            }
+            
         }
         public void ARColors()
         {
             txtStats.Inlines.Clear();
             txtStats.Inlines.Add(new Run(@"Atk: ") { Foreground = Brushes.White });
-            txtStats.Inlines.Add(new Run(Damage.PhysAR.ToString()) { Foreground = Brushes.SandyBrown });
+            txtStats.Inlines.Add(new Run(Damage.PhysAR.ToString()) { Foreground = Brushes.RosyBrown });
             txtStats.Inlines.Add(new Run(@" \ ") { Foreground = Brushes.White });
-            txtStats.Inlines.Add(new Run(Damage.MagAR.ToString()) { Foreground = Brushes.SteelBlue });
+            txtStats.Inlines.Add(new Run(Damage.MagAR.ToString()) { Foreground = Brushes.SkyBlue });
             txtStats.Inlines.Add(new Run(@" \ ") { Foreground = Brushes.White });
             txtStats.Inlines.Add(new Run(Damage.FireAR.ToString()) { Foreground = Brushes.OrangeRed });
             txtStats.Inlines.Add(new Run(@" \ ") { Foreground = Brushes.White });
@@ -259,9 +287,9 @@ namespace FromSoft_Game_Build_Planner
             var weapon = DS1Weapon.GetWeapon(Weapon, Infusion, nudUpgrade.Value);
             txtStats.Inlines.Clear();
             txtStats.Inlines.Add(new Run(@"Def: ") { Foreground = Brushes.White });
-            txtStats.Inlines.Add(new Run(weapon.PhysicalReduction.ToString()) { Foreground = Brushes.SandyBrown });
+            txtStats.Inlines.Add(new Run(weapon.PhysicalReduction.ToString()) { Foreground = Brushes.RosyBrown });
             txtStats.Inlines.Add(new Run(@"-") { Foreground = Brushes.White });
-            txtStats.Inlines.Add(new Run(weapon.MagicReduction.ToString()) { Foreground = Brushes.SteelBlue });
+            txtStats.Inlines.Add(new Run(weapon.MagicReduction.ToString()) { Foreground = Brushes.SkyBlue });
             txtStats.Inlines.Add(new Run(@"-") { Foreground = Brushes.White });
             txtStats.Inlines.Add(new Run(weapon.FireReduction.ToString()) { Foreground = Brushes.OrangeRed });
             txtStats.Inlines.Add(new Run(@"-") { Foreground = Brushes.White });
@@ -275,10 +303,13 @@ namespace FromSoft_Game_Build_Planner
             nudUpgrade.Minimum = Max.IsChecked.Value ? Weapon.MaxUpgrade : 0;
         }
 
-        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
+
+        private void WepControl_Loaded(object sender, RoutedEventArgs e)
         {
+            
             cmbWeapon.SelectedIndex = 0;
         }
 
+        
     }
 }

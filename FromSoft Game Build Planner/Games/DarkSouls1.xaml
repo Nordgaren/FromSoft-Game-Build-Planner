@@ -128,7 +128,7 @@
                     <TextBlock Text="Equip Load"
                                Foreground="White"
                                VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txtEquip" Width="45" Text="0" VerticalAlignment="Center" Foreground="White" TextAlignment="Center"/>
+                    <TextBlock x:Name="txtEquip" Text="{Binding EquipPercent}" Width="45" VerticalAlignment="Center" Foreground="White" TextAlignment="Center"/>
                     <TextBlock x:Name="txtDiv" Width="10" Text="%" VerticalAlignment="Center" Foreground="White" TextAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -221,10 +221,10 @@
                 <TextBox Text="Armor" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
                 <Separator Width="500"/>
                 <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
-                    <local:ArmorControl Armor="{Binding Head}" ArmorList="{Binding ElementName=DS1Planner, Path=HeadList, Mode=TwoWay}"/>
-                    <local:ArmorControl Armor="{Binding Body}" ArmorList="{Binding ElementName=DS1Planner, Path=BodyList, Mode=TwoWay}"/>
-                    <local:ArmorControl Armor="{Binding Arms}" ArmorList="{Binding ElementName=DS1Planner, Path=ArmsList, Mode=TwoWay}"/>
-                    <local:ArmorControl Armor="{Binding Legs}" ArmorList="{Binding ElementName=DS1Planner, Path=LegsList, Mode=TwoWay}"/>
+                    <local:ArmorControl Armor="{Binding Head, Mode=TwoWay}" ArmorList="{Binding ElementName=DS1Planner, Path=HeadList, Mode=TwoWay}"/>
+                    <local:ArmorControl Armor="{Binding Body, Mode=TwoWay}" ArmorList="{Binding ElementName=DS1Planner, Path=BodyList, Mode=TwoWay}"/>
+                    <local:ArmorControl Armor="{Binding Arms, Mode=TwoWay}" ArmorList="{Binding ElementName=DS1Planner, Path=ArmsList, Mode=TwoWay}"/>
+                    <local:ArmorControl Armor="{Binding Legs, Mode=TwoWay}" ArmorList="{Binding ElementName=DS1Planner, Path=LegsList, Mode=TwoWay}"/>
                 </StackPanel>
                 
                 <TextBox Text="Rings" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>

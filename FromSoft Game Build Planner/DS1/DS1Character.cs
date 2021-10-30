@@ -39,11 +39,15 @@ namespace FromSoft_Game_Build_Planner
             var LH1Weapon = DS1Weapon.GetWeapon(LHandWeapon1, LHandInfusion1, LHandUpgrade1);
             var LH2Weapon = DS1Weapon.GetWeapon(LHandWeapon2, LHandInfusion2, LHandUpgrade2);
 
+            if (RH1Weapon == null || RH2Weapon == null || LH1Weapon == null || LH2Weapon == null || Head == null || Body == null || Arms == null || Legs == null)
+                return 0;
+
             return RH1Weapon.Weight + RH2Weapon.Weight + LH1Weapon.Weight + LH2Weapon.Weight + Head.Weight + Body.Weight + Arms.Weight + Legs.Weight;
         }
 
-        public int MaxEquip { get; set; }
-        public float EquipPercent { get; set; }
+        public int MaxEquip { get { return 40 + Endurance; } }
+
+        public string EquipPercent { get { return (EquipLoad / MaxEquip * 100).ToString(); } }
 
         public int AttunementSlots { get; set; }
 
@@ -72,6 +76,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _endurance = value;
                 OnPropertyChanged(nameof(MaxEquip));
+                OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(Stamina));
                 OnPropertyChanged(nameof(SoulLevel));
             }
@@ -360,6 +365,7 @@ namespace FromSoft_Game_Build_Planner
                 LHandInfusion1 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(LHandDamage1));
                 OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
             }
         }
         private DS1Infusion _lHandInfusion1;
@@ -371,6 +377,7 @@ namespace FromSoft_Game_Build_Planner
                 _lHandInfusion1 = value;
                 OnPropertyChanged(nameof(LHandDamage1));
                 OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
             }
         }
         private int _lHandUpgrade1;
@@ -409,6 +416,7 @@ namespace FromSoft_Game_Build_Planner
                 LHandInfusion2 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(LHandDamage2));
                 OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
             }
         }
         private DS1Infusion _lHandInfusion2;
@@ -420,6 +428,7 @@ namespace FromSoft_Game_Build_Planner
                 _lHandInfusion2 = value;
                 OnPropertyChanged(nameof(LHandDamage2));
                 OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
             }
         }
         private int _lHandUpgrade2;
@@ -507,6 +516,12 @@ namespace FromSoft_Game_Build_Planner
                     return new DS1DamageModel();
 
                 var damage = new DS1DamageModel();
+                var strength = _2h ? Strength * 2 : Strength;
+
+                if (strength < weapon.StrRequired || Dexterity < weapon.DexRequired || Intelligence < weapon.IntRequired || Faith < weapon.FaiRequired)
+                    return damage;
+
+                damage.Useable = true;
 
                 var infusionID = 000;
                 if (infusion != null)
@@ -526,7 +541,6 @@ namespace FromSoft_Game_Build_Planner
                 damage.TotalAR = 0;
                 damage.MagAdjust = 0;
 
-                var strength = _2h ? Strength * 2 : Strength;
 
                 if (weapon.WeaponType == DS1Weapon.Type.SpellTool)
                 {

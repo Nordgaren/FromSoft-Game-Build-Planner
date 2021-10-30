@@ -16,5 +16,7 @@ namespace FromSoft_Game_Build_Planner
         public int TotalAR { get; set; }
         public int MagAdjust { get; set; }
 
+        public bool Useable { get; set; }
+
     }
 }
