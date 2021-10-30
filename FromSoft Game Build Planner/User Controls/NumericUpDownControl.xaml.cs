@@ -40,7 +40,7 @@ namespace FromSoft_Game_Build_Planner
     /// <summary>
     /// Interaction logic for NumericBox.xaml
     /// </summary>
-
+    
     public partial class NumericBox : UserControl
     {
         private readonly Regex _numMatch;
@@ -127,7 +127,6 @@ namespace FromSoft_Game_Build_Planner
             {
                 TextBoxValue.Text = value.ToString();
                 SetValue(ValueProperty, value);
-
             }
         }
 
@@ -150,12 +149,13 @@ namespace FromSoft_Game_Build_Planner
         public int Maximum
         {
             get { return (int)GetValue(MaximumProperty); }
-            set { SetValue(MaximumProperty, value); value_TextChanged(TextBoxValue, null); }
+            set { SetValue(MaximumProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Maximum.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MaximumProperty =
-            DependencyProperty.Register("Maximum", typeof(int), typeof(NumericBox), new UIPropertyMetadata(100));
+            DependencyProperty.Register("Maximum", typeof(int), typeof(NumericBox),
+                new PropertyMetadata(0, new PropertyChangedCallback(MinMaxPropertyChangedCallback)));
 
         /// <summary>
         /// Minimum value of the numeric up down conrol.
@@ -163,12 +163,19 @@ namespace FromSoft_Game_Build_Planner
         public int Minimum
         {
             get { return (int)GetValue(MinimumProperty); }
-            set { SetValue(MinimumProperty, value); value_TextChanged(TextBoxValue, null); }
+            set { SetValue(MinimumProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for Minimum.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MinimumProperty =
-            DependencyProperty.Register("Minimum", typeof(int), typeof(NumericBox), new UIPropertyMetadata(0));
+            DependencyProperty.Register("Minimum", typeof(int), typeof(NumericBox), 
+                new PropertyMetadata(0,new PropertyChangedCallback(MinMaxPropertyChangedCallback)));
+
+        private static void MinMaxPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            NumericBox numericBox = d as NumericBox;
+            numericBox.value_TextChanged(numericBox.TextBoxValue, null);
+        }
 
 
         // Value changed

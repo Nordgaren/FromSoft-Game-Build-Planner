@@ -54,7 +54,7 @@
                         HorizontalAlignment="Right"
                             Grid.ColumnSpan="2">
                     <Button x:Name="Minimize"
-                        Content="−"
+                        Content="➖"
                         VerticalAlignment="Center"
                         Width="20"
                         Height="20"
@@ -73,7 +73,7 @@
                         Foreground="White"
                         BorderThickness="0"/>
                     <Button x:Name="Close"
-                        Content="x"
+                        Content="❌"
                         Width="20"
                         Height="20"
                         Background="Transparent"

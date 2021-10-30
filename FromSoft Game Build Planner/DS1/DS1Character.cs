@@ -242,6 +242,7 @@ namespace FromSoft_Game_Build_Planner
                 Resistance = Class.BaseRes;
                 Intelligence = Class.BaseInt;
                 Faith = Class.BaseFai;
+                OnPropertyChanged(nameof(Class));
             }
         }
 
