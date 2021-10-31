@@ -110,16 +110,28 @@ namespace FromSoft_Game_Build_Planner
 
         private void Reload_Click(object sender, RoutedEventArgs e)
         {
+            var planner = CurrentPlanner as IFSPlanner;
+            planner.Reload();
+
+            //var result = StartPlanner(UserSettings.LocalUserSettings.LastExePath);
+            //if (!result)
+            //    Close();
+
+            //WindowTitle.Text = GameName;
+            //MainWindowContent.Content = CurrentPlanner;
             //Initialize(ExePath);
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void SelectExe_Click(object sender, RoutedEventArgs e)
         {
-            var exePath = MainWindow.BrowseFiles();
+            var exePath = BrowseFiles();
             UserSettings.LocalUserSettings.LastExePath = exePath;
-            var result = MainWindow.StartPlanner(exePath);
-            if (result)
+            var result = StartPlanner(exePath);
+            if (!result)
                 Close();
+
+            WindowTitle.Text = GameName;
+            MainWindowContent.Content = CurrentPlanner;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -130,6 +142,16 @@ namespace FromSoft_Game_Build_Planner
         private void Minimize_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
+        }
+
+
+        private void Menu_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            ContextMenu contextMenu = button.ContextMenu;
+            contextMenu.PlacementTarget = button;
+            contextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            contextMenu.IsOpen = true;
         }
     }
 }

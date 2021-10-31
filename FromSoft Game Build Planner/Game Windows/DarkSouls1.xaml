@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Height="720" Width="1280"
         Background="Transparent"
-        Loaded="DS1Planner_Loaded">
+        Loaded="DS1Planner_Loaded" Unloaded="DS1Planner_Unloaded">
 
     <UserControl.DataContext>
         <local:DS1ViewModel x:Name="ViewModel"/>
@@ -32,16 +32,87 @@
                 <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
 
+            <StackPanel Grid.Row="1" Grid.Column="1" >
+                <TextBlock Text="Gear" Width="300" TextAlignment="Center" Background="Transparent" Foreground="White" FontSize="40"/>
+            </StackPanel>
+
             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBox Text="{Binding Chr.Name, Mode=TwoWay}" Width="500" TextAlignment="Center" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="40"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Grid.Column="1" >
-                <TextBlock Text="Gear" Width="300" TextAlignment="Center" Background="Transparent" Foreground="White" FontSize="40"/>
-            </StackPanel>
-            
             <StackPanel Grid.Row="1" Grid.Column="3" >
                 <TextBlock Text="Stats" Width="300" TextAlignment="Center" Background="Transparent" Foreground="White" FontSize="40"/>
+            </StackPanel>
+
+
+            
+            <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
+                <TextBox Text="Items" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
+                <Separator Width="500"/>
+                <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
+                    <ComboBox HorizontalAlignment="Left" Width="300"/>
+                    <ComboBox HorizontalAlignment="Left" Width="300"/>
+                    <ComboBox HorizontalAlignment="Left" Width="300"/>
+                    <ComboBox HorizontalAlignment="Left" Width="300"/>
+                    <ComboBox HorizontalAlignment="Left" Width="300"/>
+                </StackPanel>
+                
+                <TextBox Text="Armor" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
+                <Separator Width="500"/>
+                <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
+                    <local:ArmorControl x:Name="acHead" Armor="{Binding Chr.Head, Mode=TwoWay}" ArmorList="{Binding HeadList, Mode=TwoWay}"/>
+                    <local:ArmorControl x:Name="acBody" Armor="{Binding Chr.Body, Mode=TwoWay}" ArmorList="{Binding BodyList, Mode=TwoWay}"/>
+                    <local:ArmorControl x:Name="acArms" Armor="{Binding Chr.Arms, Mode=TwoWay}" ArmorList="{Binding ArmsList, Mode=TwoWay}"/>
+                    <local:ArmorControl x:Name="acLegs" Armor="{Binding Chr.Legs, Mode=TwoWay}" ArmorList="{Binding LegsList, Mode=TwoWay}"/>
+                </StackPanel>
+                
+                <TextBox Text="Rings" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
+                <Separator Width="500"/>
+                <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
+                    <ComboBox x:Name="cmbRing1" HorizontalAlignment="Left" Width="300"/>
+                    <ComboBox x:Name="cmbRing2" HorizontalAlignment="Left" Width="300"/>
+                </StackPanel>
+                <TextBox Text="Weapons" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
+                <Separator Width="500"/>
+                <TextBlock Text="Right Hand" Foreground="White" TextAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <local:WeaponControl TwoHand="{Binding Chr.RHand2H_1, Mode=TwoWay}" 
+                                         Weapon="{Binding Chr.RHandWeapon1, Mode=TwoWay}" 
+                                         Infusion="{Binding Chr.RHandInfusion1, Mode=TwoWay}" 
+                                         Damage="{Binding Chr.RHandDamage1}" 
+                                         Upgrade="{Binding Chr.RHandUpgrade1, Mode=TwoWay}" x:Name="wcRH1" Margin="0,5,10,5"/>
+
+                    <local:WeaponControl TwoHand="{Binding Chr.RHand2H_2, Mode=TwoWay}" 
+                                         Weapon="{Binding Chr.RHandWeapon2, Mode=TwoWay}" 
+                                         Infusion="{Binding Chr.RHandInfusion2, Mode=TwoWay}" 
+                                         Damage="{Binding Chr.RHandDamage2}" 
+                                         Upgrade="{Binding Chr.RHandUpgrade2, Mode=TwoWay}" x:Name="wcRH2" Margin="0,5,10,5"/>
+                </StackPanel>
+                <TextBlock Text="Left Hand" Foreground="White" TextAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <local:WeaponControl TwoHand="{Binding Chr.LHand2H_1, Mode=TwoWay}" 
+                                         Weapon="{Binding Chr.LHandWeapon1, Mode=TwoWay}" 
+                                         Infusion="{Binding Chr.LHandInfusion1, Mode=TwoWay}" 
+                                         Damage="{Binding Chr.LHandDamage1}" 
+                                         Upgrade="{Binding Chr.LHandUpgrade1, Mode=TwoWay}" x:Name="wcLH1" Margin="0,5,10,5"/>
+
+                    <local:WeaponControl TwoHand="{Binding Chr.LHand2H_2, Mode=TwoWay}" 
+                                         Weapon="{Binding Chr.LHandWeapon2, Mode=TwoWay}" 
+                                         Infusion="{Binding Chr.LHandInfusion2, Mode=TwoWay}" 
+                                         Damage="{Binding Chr.LHandDamage2}" 
+                                         Upgrade="{Binding Chr.LHandUpgrade2, Mode=TwoWay}" x:Name="wcLH2" Margin="0,5,10,5"/>
+                </StackPanel>
+            </StackPanel>
+        
+            <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,20,0,0">
+                <local:DefenseControl DefenseModel="{Binding Chr.DefenseModel}" SpecialDefenseModel="{Binding Chr.SpecialDefenseModel}"/>
+
+
+
+
+
+
+
             </StackPanel>
             
             <StackPanel Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
@@ -101,7 +172,7 @@
                     <TextBlock Text="Strength"
                                Foreground="White"
                                VerticalAlignment="Center"/>
-                    <local:NumericBox x:Name="nudStr" Maximum="99" Minimum="{Binding Chr.Class.BaseS, Mode=TwoWay}" Value="{Binding Chr.Strength, Mode=TwoWay}"/>
+                    <local:NumericBox x:Name="nudStr" Maximum="99" Minimum="{Binding Chr.Class.BaseStr, Mode=TwoWay}" Value="{Binding Chr.Strength, Mode=TwoWay}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="Dexterity"
@@ -140,63 +211,6 @@
                 </StackPanel>
             </StackPanel>
 
-            <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
-                <TextBox Text="Items" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
-                <Separator Width="500"/>
-                <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
-                    <ComboBox HorizontalAlignment="Left" Width="300"/>
-                    <ComboBox HorizontalAlignment="Left" Width="300"/>
-                    <ComboBox HorizontalAlignment="Left" Width="300"/>
-                    <ComboBox HorizontalAlignment="Left" Width="300"/>
-                    <ComboBox HorizontalAlignment="Left" Width="300"/>
-                </StackPanel>
-                
-                <TextBox Text="Armor" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
-                <Separator Width="500"/>
-                <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
-                    <local:ArmorControl Armor="{Binding Chr.Head, Mode=TwoWay}" ArmorList="{Binding HeadList, Mode=TwoWay}"/>
-                    <local:ArmorControl Armor="{Binding Chr.Body, Mode=TwoWay}" ArmorList="{Binding BodyList, Mode=TwoWay}"/>
-                    <local:ArmorControl Armor="{Binding Chr.Arms, Mode=TwoWay}" ArmorList="{Binding ArmsList, Mode=TwoWay}"/>
-                    <local:ArmorControl Armor="{Binding Chr.Legs, Mode=TwoWay}" ArmorList="{Binding LegsList, Mode=TwoWay}"/>
-                </StackPanel>
-                
-                <TextBox Text="Rings" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
-                <Separator Width="500"/>
-                <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
-                    <ComboBox x:Name="cmbRing1" HorizontalAlignment="Left" Width="300"/>
-                    <ComboBox x:Name="cmbRing2" HorizontalAlignment="Left" Width="300"/>
-                </StackPanel>
-                <TextBox Text="Weapons" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
-                <Separator Width="500"/>
-                <TextBlock Text="Right Hand" Foreground="White" TextAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-                    <local:WeaponControl TwoHand="{Binding Chr.RHand2H_1, Mode=TwoWay}" 
-                                         Weapon="{Binding Chr.RHandWeapon1, Mode=TwoWay}" 
-                                         Infusion="{Binding Chr.RHandInfusion1, Mode=TwoWay}" 
-                                         Damage="{Binding Chr.RHandDamage1}" 
-                                         Upgrade="{Binding Chr.RHandUpgrade1, Mode=TwoWay}" x:Name="wcRH1" Margin="0,5,10,5"/>
-
-                    <local:WeaponControl TwoHand="{Binding Chr.RHand2H_2, Mode=TwoWay}" 
-                                         Weapon="{Binding Chr.RHandWeapon2, Mode=TwoWay}" 
-                                         Infusion="{Binding Chr.RHandInfusion2, Mode=TwoWay}" 
-                                         Damage="{Binding Chr.RHandDamage2}" 
-                                         Upgrade="{Binding Chr.RHandUpgrade2, Mode=TwoWay}" x:Name="wcRH2" Margin="0,5,10,5"/>
-                </StackPanel>
-                <TextBlock Text="Left Hand" Foreground="White" TextAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-                    <local:WeaponControl TwoHand="{Binding Chr.LHand2H_1, Mode=TwoWay}" 
-                                         Weapon="{Binding Chr.LHandWeapon1, Mode=TwoWay}" 
-                                         Infusion="{Binding Chr.LHandInfusion1, Mode=TwoWay}" 
-                                         Damage="{Binding Chr.LHandDamage1}" 
-                                         Upgrade="{Binding Chr.LHandUpgrade1, Mode=TwoWay}" x:Name="wcLH1" Margin="0,5,10,5"/>
-
-                    <local:WeaponControl TwoHand="{Binding Chr.LHand2H_2, Mode=TwoWay}" 
-                                         Weapon="{Binding Chr.LHandWeapon2, Mode=TwoWay}" 
-                                         Infusion="{Binding Chr.LHandInfusion2, Mode=TwoWay}" 
-                                         Damage="{Binding Chr.LHandDamage2}" 
-                                         Upgrade="{Binding Chr.LHandUpgrade2, Mode=TwoWay}" x:Name="wcLH2" Margin="0,5,10,5"/>
-                </StackPanel>
-            </StackPanel>
         </Grid>
 
         

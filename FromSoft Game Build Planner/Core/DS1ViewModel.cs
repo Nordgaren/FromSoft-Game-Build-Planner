@@ -17,7 +17,7 @@ namespace FromSoft_Game_Build_Planner
             set 
             {
                 _chr = value;
-                OnPropertyChanged(nameof(Chr));
+                OnPropertyChanged();
             }
         }
 
@@ -42,7 +42,6 @@ namespace FromSoft_Game_Build_Planner
             LegsList = new(DS1Armor.ArmorLegs);
         }
 
-
         List<FMG> ItemFMGS;
         List<FMG> MenuFMGS;
 
@@ -62,6 +61,16 @@ namespace FromSoft_Game_Build_Planner
 
         private void Initialize(string exePath)
         {
+            DS1Weapon.WeaponsList = new();
+            DS1Weapon.BoltList = new();
+            DS1Weapon.ArrowList = new();
+            DS1Weapon.Weapons = new();
+            DS1Armor.ArmorHead = new();
+            DS1Armor.ArmorBody = new();
+            DS1Armor.ArmorArms = new();
+            DS1Armor.ArmorLegs = new();
+            DS1Class.Classes = new();
+
             var exeDir = Path.GetDirectoryName(exePath);
             var dcx = DSR ? ".dcx" : "";
             var gameParamFile = $@"{exeDir}\param\GameParam\GameParam.parambnd{dcx}";

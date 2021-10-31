@@ -26,6 +26,11 @@ namespace FromSoft_Game_Build_Planner
             return Name;
         }
 
+        public DS1Infusion()
+        {
+
+        }
+
         public static List<DS1Infusion> All = new List<DS1Infusion>()
         {
             new DS1Infusion("Normal", 000, 15, false),

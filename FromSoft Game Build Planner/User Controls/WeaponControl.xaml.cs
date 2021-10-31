@@ -104,6 +104,7 @@ namespace FromSoft_Game_Build_Planner
             if (infusion == null)
                 return;
 
+            HandleMinValue();
             nudUpgrade.Maximum = infusion.MaxUpgrade;
         }
 
@@ -114,7 +115,9 @@ namespace FromSoft_Game_Build_Planner
 
             TwoHand = false;
             TwoHandChecked.IsEnabled = true;
-
+            nudUpgrade.Minimum = 0;
+            nudUpgrade.Maximum = 15;
+            HandleMinValue();
             ChangeWeapon();
 
             if (Weapon.WeaponType == DS1Weapon.Type.Bow || Weapon.WeaponType == DS1Weapon.Type.Crossbow)
@@ -123,6 +126,16 @@ namespace FromSoft_Game_Build_Planner
                 TwoHandChecked.IsEnabled = false;
             }
 
+        }
+
+        public void Reload()
+        {
+            var indexWeapon = cmbWeapon.Items.GetIndexByProperty<DS1Weapon>(x => x.ID == Weapon.ID);
+            var indexInfusion = cmbInfusion.Items.GetIndexByProperty<DS1Infusion>(x => x.Value == Infusion.Value);
+            cmbWeapon.SelectedIndex = -1;
+            cmbInfusion.SelectedIndex = -1;
+            cmbWeapon.SelectedIndex = indexWeapon;
+            cmbInfusion.SelectedIndex = indexInfusion;
         }
 
         private void ChangeWeapon()
@@ -135,14 +148,17 @@ namespace FromSoft_Game_Build_Planner
                 case DS1Weapon.Upgrade.None:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
+                    cmbInfusion.Items.Add(DS1Infusion.All[0]);
+                    cmbInfusion.SelectedIndex = 0;
                     nudUpgrade.IsEnabled = false;
                     nudUpgrade.Maximum = 0;
-                    cmbInfusion.Items.Add(DS1Infusion.All[0]);
                     cmbInfusion.SelectedIndex = 0;
                     break;
                 case DS1Weapon.Upgrade.Unique:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
+                    cmbInfusion.Items.Add(DS1Infusion.All[0]);
+                    cmbInfusion.SelectedIndex = 0;
                     nudUpgrade.Maximum = 5;
                     nudUpgrade.IsEnabled = true;
                     break;
@@ -166,12 +182,16 @@ namespace FromSoft_Game_Build_Planner
                 case DS1Weapon.Upgrade.PyroFlame:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
+                    cmbInfusion.Items.Add(DS1Infusion.All[0]);
+                    cmbInfusion.SelectedIndex = 0;
                     nudUpgrade.Maximum = 15;
                     nudUpgrade.IsEnabled = true;
                     break;
                 case DS1Weapon.Upgrade.PyroFlameAscended:
                     cmbInfusion.IsEnabled = false;
                     cmbInfusion.Items.Clear();
+                    cmbInfusion.Items.Add(DS1Infusion.All[0]);
+                    cmbInfusion.SelectedIndex = 0;
                     nudUpgrade.Maximum = 5;
                     nudUpgrade.IsEnabled = true;
                     break;
@@ -301,16 +321,20 @@ namespace FromSoft_Game_Build_Planner
 
         private void Max_Checked(object sender, RoutedEventArgs e)
         {
+            HandleMinValue();
+        }
+
+        private void HandleMinValue()
+        {
             nudUpgrade.Minimum = Max.IsChecked.Value ? Weapon.MaxUpgrade : 0;
         }
 
-
         private void WepControl_Loaded(object sender, RoutedEventArgs e)
         {
-            
-            cmbWeapon.SelectedIndex = 0;
+            if (cmbWeapon.SelectedIndex == -1)
+                cmbWeapon.SelectedIndex = 0;
         }
 
-        
+
     }
 }

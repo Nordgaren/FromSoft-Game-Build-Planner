@@ -30,6 +30,7 @@ namespace FromSoft_Game_Build_Planner
                 return StaminaArray[Endurance];
             }
         }
+        
         public float EquipLoad { get { return GetEquipLoad(); } }
 
         private float GetEquipLoad()
@@ -247,7 +248,6 @@ namespace FromSoft_Game_Build_Planner
         }
 
         #region RHWeapons
-
         public DS1DamageModel RHandDamage1
         {
             get { return CalculatAR(RHandWeapon1, RHandInfusion1, RHandUpgrade1, RHand2H_1); }
@@ -260,9 +260,10 @@ namespace FromSoft_Game_Build_Planner
             set 
             { 
                 _rHandWeapon1 = value;
-                RHandInfusion1 = DS1Infusion.All[0];
+                //RHandInfusion1 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(RHandDamage1));
-                OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private DS1Infusion _rHandInfusion1;
@@ -273,7 +274,9 @@ namespace FromSoft_Game_Build_Planner
             { 
                 _rHandInfusion1 = value;
                 OnPropertyChanged(nameof(RHandDamage1));
-                OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
+
             }
         }
         private int _rHandUpgrade1;
@@ -309,9 +312,11 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _rHandWeapon2 = value;
-                RHandInfusion2 = DS1Infusion.All[0];
+                //RHandInfusion2 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(RHandDamage2));
-                OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(RHandWeapon2));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private DS1Infusion _rHandInfusion2;
@@ -322,7 +327,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _rHandInfusion2 = value;
                 OnPropertyChanged(nameof(RHandDamage2));
-                OnPropertyChanged(nameof(EquipLoad));
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private int _rHandUpgrade2;
@@ -363,10 +369,10 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _lHandWeapon1 = value;
-                LHandInfusion1 = DS1Infusion.All[0];
+                //LHandInfusion1 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(LHandDamage1));
-                OnPropertyChanged(nameof(EquipLoad));
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private DS1Infusion _lHandInfusion1;
@@ -377,8 +383,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _lHandInfusion1 = value;
                 OnPropertyChanged(nameof(LHandDamage1));
-                OnPropertyChanged(nameof(EquipLoad));
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private int _lHandUpgrade1;
@@ -414,10 +420,10 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _lHandWeapon2 = value;
-                LHandInfusion2 = DS1Infusion.All[0];
+                //LHandInfusion2 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(LHandDamage2));
-                OnPropertyChanged(nameof(EquipLoad));
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private DS1Infusion _lHandInfusion2;
@@ -428,8 +434,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _lHandInfusion2 = value;
                 OnPropertyChanged(nameof(LHandDamage2));
-                OnPropertyChanged(nameof(EquipLoad));
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private int _lHandUpgrade2;
@@ -454,10 +460,75 @@ namespace FromSoft_Game_Build_Planner
         }
         #endregion
 
-        public DS1Armor Head { get; set; }
-        public DS1Armor Body { get; set; }
-        public DS1Armor Arms { get; set; }
-        public DS1Armor Legs { get; set; }
+        public DS1DefenseModel DefenseModel { get { return new DS1DefenseModel(); } }
+
+        public DS1SpecialDefenseModel SpecialDefenseModel { get { return GetSpecialDefense(); } }
+
+        private DS1SpecialDefenseModel GetSpecialDefense()
+        {
+            var specialDef = new DS1SpecialDefenseModel();
+
+            var RH1Weapon = DS1Weapon.GetWeapon(RHandWeapon1, RHandInfusion1, RHandUpgrade1);
+            var RH2Weapon = DS1Weapon.GetWeapon(RHandWeapon2, RHandInfusion2, RHandUpgrade2);
+            var LH1Weapon = DS1Weapon.GetWeapon(LHandWeapon1, LHandInfusion1, LHandUpgrade1);
+            var LH2Weapon = DS1Weapon.GetWeapon(LHandWeapon2, LHandInfusion2, LHandUpgrade2);
+
+            if (RH1Weapon == null || RH2Weapon == null || LH1Weapon == null || LH2Weapon == null || Head == null || Body == null || Arms == null || Legs == null)
+                return specialDef;
+
+            specialDef.BleedDef = RH1Weapon.BleedResist + RH2Weapon.BleedResist + LH1Weapon.BleedResist + LH2Weapon.BleedResist + Head.BleedResist + Body.BleedResist + Arms.BleedResist + Legs.BleedResist;
+            specialDef.PoisonDef = RH1Weapon.PoisonResist + RH2Weapon.PoisonResist + LH1Weapon.PoisonResist + LH2Weapon.PoisonResist + Head.PoisonResist + Body.PoisonResist + Arms.PoisonResist + Legs.PoisonResist;
+            specialDef.CurseDef = RH1Weapon.CurseResist + RH2Weapon.CurseResist + LH1Weapon.CurseResist + LH2Weapon.CurseResist + Head.CurseResist + Body.CurseResist + Arms.CurseResist + Legs.CurseResist;
+
+            return specialDef;
+        }
+
+        private DS1Armor _head;
+        public DS1Armor Head { get { return _head; }
+            set
+            {
+                _head = value;
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
+            }
+        }
+
+        private DS1Armor _body;
+        public DS1Armor Body
+        {
+            get { return _body; }
+            set
+            {
+                _body = value;
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
+            }
+        }
+
+        private DS1Armor _arms;
+        public DS1Armor Arms
+        {
+            get { return _arms; }
+            set
+            {
+                _arms = value;
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
+            }
+        }
+
+        private DS1Armor _legs;
+        public DS1Armor Legs
+        {
+            get { return _legs; }
+            set
+            {
+                _legs = value;
+                OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
+            }
+        }
+        
 
         public DS1Ring Ring1 { get; set; }
         public DS1Ring Ring2 { get; set; }
@@ -483,6 +554,9 @@ namespace FromSoft_Game_Build_Planner
 
         private int CalculateSL()
         {
+            if (Class == null)
+                return 0;
+
             int sl = Class.SoulLevel;
             sl += Vitality - Class.BaseVit;
             sl += Attunement - Class.BaseAtt;

@@ -15,12 +15,16 @@
     <Border Background="#1a1a1a"
             CornerRadius="10">
         <Grid MouseDown="Grid_MouseDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="133*"/>
+                <ColumnDefinition Width="507*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid Background="#333333"
-                  Grid.ColumnSpan="99">
+                  Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200" />
                     <ColumnDefinition />
@@ -43,12 +47,26 @@
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            />
-                <TextBlock Text="Menu"
+                <Button Grid.RowSpan="4" x:Name="Menu" Style="{DynamicResource MenuButtons}" Content="Menu"
                            Foreground="White"
                            Grid.Column="1"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
-                           />
+                           ContextMenuService.IsEnabled="False"
+                           ContextMenuService.Placement="Bottom"
+                           ContextMenuService.PlacementTarget="{Binding ElementName=Menu}"
+                           ContextMenuService.ShowOnDisabled="True"
+                           Click="Menu_Click">
+                    <Button.ContextMenu>
+                        <ContextMenu Style="{DynamicResource ContextMenuTheme}">
+                            <MenuItem Header="Select Executeable" Click="SelectExe_Click"/>
+                            <MenuItem Header="Reload Params" Click="Reload_Click"/>
+                            <Separator />
+                            <MenuItem Header="Save Character" />
+                            <MenuItem Header="Reload Character" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
                 <StackPanel Orientation="Horizontal" 
                         Grid.Column="11"
                         HorizontalAlignment="Right"
@@ -63,7 +81,8 @@
                         Foreground="White"
                         Click="Minimize_Click"
                         BorderThickness="0"/>
-                    <Button x:Name="Maximize"
+
+                    <!--<Button x:Name="Maximize"
                         Content="☐"
                         VerticalAlignment="Center"
                         Width="20"
@@ -71,7 +90,7 @@
                         FontWeight="Bold"
                         Background="Transparent"
                         Foreground="White"
-                        BorderThickness="0"/>
+                        BorderThickness="0"/>-->
                     <Button x:Name="Close"
                         Content="❌"
                         Width="20"
@@ -82,8 +101,8 @@
                         BorderThickness="0"/>
                 </StackPanel>
             </Grid>
-            <ContentControl x:Name="MainWindowContent" Grid.Row="1"/>
+            <ContentControl x:Name="MainWindowContent" Grid.Row="1" Grid.ColumnSpan="2"/>
         </Grid>
     </Border>
-    
+
 </Window>

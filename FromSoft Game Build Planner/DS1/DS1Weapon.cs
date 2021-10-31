@@ -9,10 +9,10 @@ namespace FromSoft_Game_Build_Planner
 {
     public class DS1Weapon
     {
-        public static List<DS1Weapon> WeaponsList = new List<DS1Weapon>();
-        public static List<DS1Weapon> BoltList = new List<DS1Weapon>();
-        public static List<DS1Weapon> ArrowList = new List<DS1Weapon>();
-        public static Dictionary<int, DS1Weapon> Weapons = new Dictionary<int, DS1Weapon>();
+        public static List<DS1Weapon> WeaponsList;
+        public static List<DS1Weapon> BoltList;
+        public static List<DS1Weapon> ArrowList;
+        public static Dictionary<int, DS1Weapon> Weapons;
 
         public enum Type
         {
@@ -214,6 +214,9 @@ namespace FromSoft_Game_Build_Planner
 
         private void SetUpgradePath()
         {
+            if (Name.ToLower().Contains("sorc"))
+                Console.WriteLine(  );
+
             if (WeaponType == Type.PyroFlame)
             {
                 UpgradePath = Upgrade.PyroFlame;
@@ -227,7 +230,10 @@ namespace FromSoft_Game_Build_Planner
             }
 
             if (WeaponType == Type.SpellTool)
+            {
                 UpgradePath = Upgrade.None;
+                return;
+            }
 
             if (WeaponType == Type.Shield)
             {
@@ -385,6 +391,9 @@ namespace FromSoft_Game_Build_Planner
 
             if (infusion == null)
                 infusion = DS1Infusion.All[0];
+
+            if (!Weapons.ContainsKey(weapon.ID + infusion.Value))
+                return null;
             
             weapon = Weapons[weapon.ID + infusion.Value];
             if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
@@ -392,5 +401,6 @@ namespace FromSoft_Game_Build_Planner
 
             return weapon;
         }
+
     }
 }

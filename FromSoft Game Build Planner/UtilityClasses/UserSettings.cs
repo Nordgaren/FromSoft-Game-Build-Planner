@@ -17,7 +17,7 @@ namespace FromSoft_Game_Build_Planner
 
         public string LastExePath;
 
-        public DS1Character LastDS1Character;
+        public object LastDS1Character;
 
         public void Save()
         {
@@ -28,6 +28,8 @@ namespace FromSoft_Game_Build_Planner
         public static UserSettings GetUserSettings()
         {
             var jsonString = File.ReadAllText(SettingsPath);
+            var jsonSerializerSettings = new JsonSerializerSettings();
+
             return JsonConvert.DeserializeObject<UserSettings>(jsonString);
         }
 

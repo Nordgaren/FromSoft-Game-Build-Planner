@@ -9,7 +9,7 @@
              d:DesignHeight="22" d:DesignWidth="400">
     <Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ComboBox x:Name="cmbArmor" Width="250" ItemsSource="{Binding ElementName=ArmorCont, Path=ArmorList, Mode=TwoWay}" SelectedItem="{Binding ElementName=ArmorCont, Path=Armor, Mode=TwoWay}" Loaded="cmbArmor_Loaded" SelectionChanged="cmbArmor_SelectionChanged"/>
+            <ComboBox x:Name="cmbArmor" Width="250" ItemsSource="{Binding ElementName=ArmorCont, Path=ArmorList, Mode=TwoWay}" SelectedItem="{Binding ElementName=ArmorCont, Path=Armor, Mode=TwoWay}" Loaded="cmbArmor_Loaded" SelectionChanged="cmbArmor_SelectionChanged" Foreground="Black"/>
             <local:NumericBox x:Name="nudUpgrade" Value="{Binding ElementName=ArmorCont, Path=Upgrade, Mode=TwoWay}"/>
             <CheckBox Margin="5" x:Name="Max" Content="Max" VerticalAlignment="Center" Foreground="White" Checked="Max_Checked" Unchecked="Max_Checked"/>
         </StackPanel>

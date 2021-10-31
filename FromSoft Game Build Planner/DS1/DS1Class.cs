@@ -10,6 +10,7 @@ namespace FromSoft_Game_Build_Planner
     public class DS1Class
     {
         public string Name { get; set; }
+        public int ID{ get; set; }
 
         public short SoulLevel { get; set; } 
      
@@ -29,6 +30,7 @@ namespace FromSoft_Game_Build_Planner
         public DS1Class(PARAM.Row classParam)
         {
             Name = classParam.Name;
+            ID = classParam.ID;
 
             SoulLevel = (short)classParam.Cells[53].Value;
 

@@ -58,16 +58,29 @@ namespace FromSoft_Game_Build_Planner
 
         private void Max_Checked(object sender, RoutedEventArgs e)
         {
+            HandleMinValue();
+        }
+
+        private void HandleMinValue()
+        {
             nudUpgrade.Minimum = Max.IsChecked.Value ? Armor.MaxUpgrade : 0;
         }
 
         private void cmbArmor_Loaded(object sender, RoutedEventArgs e)
         {
             cmbArmor.ItemsSource = ArmorList;
-            cmbArmor.SelectedIndex = 0;
+            if (cmbArmor.SelectedIndex == -1)
+                cmbArmor.SelectedIndex = 0;
         }
 
-        private void ChangeWeapon()
+        public void Reload()
+        {
+            var armorIndex = cmbArmor.Items.GetIndexByProperty<DS1Armor>(x => x.ID == Armor.ID);
+            cmbArmor.SelectedIndex = -1;
+            cmbArmor.SelectedIndex = armorIndex;
+        }
+
+        private void ChangeArmor()
         {
             if (Armor == null)
                 return;
@@ -91,7 +104,10 @@ namespace FromSoft_Game_Build_Planner
 
         private void cmbArmor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ChangeWeapon();
+            nudUpgrade.Minimum = 0;
+            nudUpgrade.Maximum = 15;
+            HandleMinValue();
+            ChangeArmor();
         }
     }
 }
