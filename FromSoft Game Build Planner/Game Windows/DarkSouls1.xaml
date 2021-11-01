@@ -138,8 +138,8 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="Humanity"
                                Foreground="White"
-                               VerticalAlignment="Center"/>
-                    <local:NumericBox x:Name="nudHumanity" Maximum="99"/>
+                               VerticalAlignment="Center" />
+                    <local:NumericBox x:Name="nudHumanity" Maximum="99" Value="{Binding Chr.Humanity, Mode=TwoWay}"/>
                 </StackPanel>
                 <ComboBox x:Name="cmbClass" DisplayMemberPath="Name" SelectedIndex="0" ItemsSource="{Binding Classes}" SelectedItem="{Binding Chr.Class, Mode=TwoWay}" HorizontalAlignment="Right" Width="115" Margin="0,10,0,10" />
                 <TextBox Text="Stats" Width="400" TextAlignment="Right" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>

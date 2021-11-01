@@ -87,6 +87,10 @@ namespace FromSoft_Game_Build_Planner
             ReadFMGs(itemFMGBND, menuFMGBND);
             ReadParams(paramBND, paramDefBND, paramDefs, paramList);
 
+            DS1Armor.ArmorHead = DS1Armor.ArmorHead.OrderBy(x => x.Name).OrderBy(x => x.ID != 900000).ToList();
+            DS1Armor.ArmorBody = DS1Armor.ArmorBody.OrderBy(x => x.Name).OrderBy(x => x.ID != 901000).ToList();
+            DS1Armor.ArmorArms = DS1Armor.ArmorArms.OrderBy(x => x.Name).OrderBy(x => x.ID != 902000).ToList();
+            DS1Armor.ArmorLegs = DS1Armor.ArmorLegs.OrderBy(x => x.Name).OrderBy(x => x.ID != 903000).ToList();
 
             //var drbFile = $@"{ExePath}\menu\menu.drb";
             //var tpfFile = $@"{ExePath}\menu\menu.tpf";

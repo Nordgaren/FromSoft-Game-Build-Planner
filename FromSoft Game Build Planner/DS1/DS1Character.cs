@@ -15,7 +15,18 @@ namespace FromSoft_Game_Build_Planner
 
         public int SoulLevel { get { return CalculateSL(); } }
 
-        public int Humanity { get; set; }
+        private int _humanity;
+
+        public int Humanity
+        {
+            get { return _humanity; }
+            set 
+            { 
+                _humanity = value;
+                OnPropertyChanged(nameof(DefenseModel));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
+            }
+        }
 
         public int Health { get { 
                 var lol = Calculate(100, Vitality);
@@ -62,6 +73,7 @@ namespace FromSoft_Game_Build_Planner
                 _vitality = value; 
                 OnPropertyChanged(nameof(Health));
                 OnPropertyChanged(nameof(SoulLevel));
+                OnPropertyChanged(nameof(DefenseModel));
             }
         }
         
@@ -70,7 +82,6 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _attunement = value;
-                OnPropertyChanged(nameof(SoulLevel));
             }
         }
 
@@ -83,6 +94,8 @@ namespace FromSoft_Game_Build_Planner
                 OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(Stamina));
                 OnPropertyChanged(nameof(SoulLevel));
+                OnPropertyChanged(nameof(DefenseModel));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
 
@@ -92,7 +105,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _strength = value;
                 CheckWeaponsStr();
-                OnPropertyChanged(nameof(SoulLevel)); 
+                OnPropertyChanged(nameof(SoulLevel));
+                OnPropertyChanged(nameof(DefenseModel));
             }
         }
 
@@ -127,6 +141,7 @@ namespace FromSoft_Game_Build_Planner
                 _dexterity = value;
                 CheckWeaponsDex();
                 OnPropertyChanged(nameof(SoulLevel));
+                OnPropertyChanged(nameof(DefenseModel));
             }
         }
 
@@ -160,6 +175,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _resistance = value;
                 OnPropertyChanged(nameof(SoulLevel));
+                OnPropertyChanged(nameof(DefenseModel));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
 
@@ -170,6 +187,7 @@ namespace FromSoft_Game_Build_Planner
                 _intelligence = value;
                 CheckWeaponsInt();
                 OnPropertyChanged(nameof(SoulLevel));
+                OnPropertyChanged(nameof(DefenseModel));
             }
         }
 
@@ -203,6 +221,7 @@ namespace FromSoft_Game_Build_Planner
                 _faith = value;
                 CheckWeaponsFai();
                 OnPropertyChanged(nameof(SoulLevel));
+                OnPropertyChanged(nameof(DefenseModel));
             }
         }
 
@@ -495,19 +514,19 @@ namespace FromSoft_Game_Build_Planner
             var magic = .85f * sum + 1.35f * Resistance;
             magic = magic < max ? magic : max;
             var light = sum < max ? sum : max;
-            var physicalBase = (int)Math.Round(Calculate(102, phys));
-            var magicBase = (int)Math.Round(Calculate(102, fire));
-            var fireBase = (int)Math.Round(Calculate(102, magic));
-            var lightningBase = (int)Math.Round(Calculate(102, light));
+            defModel.PhysDefBase = (int)Math.Round(Calculate(102, phys));
+            defModel.MagDefBase = (int)Math.Round(Calculate(102, fire));
+            defModel.FireDefBase = (int)Math.Round(Calculate(102, magic));
+            defModel.LightDefBase = (int)Math.Round(Calculate(102, light));
 
-            defModel.PhysDef = (int)((Head.PhysicalDefense * headMultiplier.PhysicalMultiplier) + (Body.PhysicalDefense * bodyMultiplier.PhysicalMultiplier) + (Arms.PhysicalDefense * armsMultiplier.PhysicalMultiplier) + (Legs.PhysicalDefense * legsMultiplier.PhysicalMultiplier)) + physicalBase;
-            defModel.Slash = (int)((Head.PhysicalDefense * (1 + Head.SlashDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.SlashMultiplier) + (Body.PhysicalDefense * (1 + Body.SlashDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.SlashMultiplier) + (Arms.PhysicalDefense * (1 + Arms.SlashDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.SlashMultiplier) + (Legs.PhysicalDefense * (1 + Legs.SlashDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.SlashMultiplier)) + physicalBase;
-            defModel.Strike = (int)((Head.PhysicalDefense * (1 + Head.BlowDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.BlowMultiplier) + (Body.PhysicalDefense * (1 + Body.BlowDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.BlowMultiplier) + (Arms.PhysicalDefense * (1 + Arms.BlowDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.BlowMultiplier) + (Legs.PhysicalDefense * (1 + Legs.BlowDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.BlowMultiplier)) + physicalBase;
-            defModel.Thrust = (int)((Head.PhysicalDefense * (1 + Head.ThrustDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.ThrustMultiplier) + (Body.PhysicalDefense * (1 + Body.ThrustDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.ThrustMultiplier) + (Arms.PhysicalDefense * (1 + Arms.ThrustDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.ThrustMultiplier) + (Legs.PhysicalDefense * (1 + Legs.ThrustDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.ThrustMultiplier)) + physicalBase;
+            defModel.PhysDef = (int)((Head.PhysicalDefense * headMultiplier.PhysicalMultiplier) + (Body.PhysicalDefense * bodyMultiplier.PhysicalMultiplier) + (Arms.PhysicalDefense * armsMultiplier.PhysicalMultiplier) + (Legs.PhysicalDefense * legsMultiplier.PhysicalMultiplier)) + defModel.PhysDefBase;
+            defModel.Slash = (int)((Head.PhysicalDefense * (1 + Head.SlashDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.SlashMultiplier) + (Body.PhysicalDefense * (1 + Body.SlashDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.SlashMultiplier) + (Arms.PhysicalDefense * (1 + Arms.SlashDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.SlashMultiplier) + (Legs.PhysicalDefense * (1 + Legs.SlashDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.SlashMultiplier)) + defModel.PhysDefBase;
+            defModel.Strike = (int)((Head.PhysicalDefense * (1 + Head.BlowDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.BlowMultiplier) + (Body.PhysicalDefense * (1 + Body.BlowDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.BlowMultiplier) + (Arms.PhysicalDefense * (1 + Arms.BlowDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.BlowMultiplier) + (Legs.PhysicalDefense * (1 + Legs.BlowDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.BlowMultiplier)) + defModel.PhysDefBase;
+            defModel.Thrust = (int)((Head.PhysicalDefense * (1 + Head.ThrustDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.ThrustMultiplier) + (Body.PhysicalDefense * (1 + Body.ThrustDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.ThrustMultiplier) + (Arms.PhysicalDefense * (1 + Arms.ThrustDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.ThrustMultiplier) + (Legs.PhysicalDefense * (1 + Legs.ThrustDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.ThrustMultiplier)) + defModel.PhysDefBase;
 
-            defModel.MagDef = (int)((Head.MagicDefense * headMultiplier.MagicMultiplier) + (Body.MagicDefense * bodyMultiplier.MagicMultiplier) + (Arms.MagicDefense * armsMultiplier.MagicMultiplier) + (Legs.MagicDefense * legsMultiplier.MagicMultiplier)) + magicBase;
-            defModel.FireDef = (int)((Head.FireDefense * headMultiplier.FireMultiplier) + (Body.FireDefense * bodyMultiplier.FireMultiplier) + (Arms.FireDefense * armsMultiplier.FireMultiplier) + (Legs.FireDefense * legsMultiplier.FireMultiplier)) + fireBase;
-            defModel.LightDef = (int)((Head.LightningDefense * headMultiplier.LightningMultiplier) + (Body.LightningDefense * bodyMultiplier.LightningMultiplier) + (Arms.LightningDefense * armsMultiplier.LightningMultiplier) + (Legs.LightningDefense * legsMultiplier.LightningMultiplier)) + lightningBase;
+            defModel.MagDef = (int)((Head.MagicDefense * headMultiplier.MagicMultiplier) + (Body.MagicDefense * bodyMultiplier.MagicMultiplier) + (Arms.MagicDefense * armsMultiplier.MagicMultiplier) + (Legs.MagicDefense * legsMultiplier.MagicMultiplier)) + defModel.MagDefBase;
+            defModel.FireDef = (int)((Head.FireDefense * headMultiplier.FireMultiplier) + (Body.FireDefense * bodyMultiplier.FireMultiplier) + (Arms.FireDefense * armsMultiplier.FireMultiplier) + (Legs.FireDefense * legsMultiplier.FireMultiplier)) + defModel.FireDefBase;
+            defModel.LightDef = (int)((Head.LightningDefense * headMultiplier.LightningMultiplier) + (Body.LightningDefense * bodyMultiplier.LightningMultiplier) + (Arms.LightningDefense * armsMultiplier.LightningMultiplier) + (Legs.LightningDefense * legsMultiplier.LightningMultiplier)) + defModel.LightDefBase;
 
 
             return defModel;
@@ -541,15 +560,15 @@ namespace FromSoft_Game_Build_Planner
             var legsInfusion = Legs.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
             var legsMultiplier = DS1ArmorUpgrade.ArmorUpgrades[legsInfusion + LegsUpgrade];
 
-            var baseBleed = (int)Math.Round(Calculate(112, Endurance));
-            var basePoison = (int)Math.Round(Calculate(110, Resistance));
-            var baseToxic = (int)Math.Round(Calculate(111, Resistance));
-            var baseCurse = (int)Math.Round(Calculate(113, Humanity > 30 ? Humanity : 30));
+            specialDef.BleedDefBase = (int)Math.Round(Calculate(112, Endurance));
+            specialDef.PoisnDefBase = (int)Math.Round(Calculate(110, Resistance));
+            specialDef.ToxicDefBase = (int)Math.Round(Calculate(111, Resistance));
+            specialDef.CurseDefBase = (int)Math.Round(Calculate(113, Humanity < 30 ? Humanity : 30));
 
-            specialDef.BleedDef = (int)((rh1Weapon.BleedResist * rh1Multiplier.BleedRes) + (rh2Weapon.BleedResist * rh2Multiplier.BleedRes) + (lh1Weapon.BleedResist * lh1Multiplier.BleedRes) + (lh2Weapon.BleedResist * lh2Multiplier.BleedRes) + (Head.BleedResist * headMultiplier.BleedMultiplier) + (Body.BleedResist * bodyMultiplier.BleedMultiplier) + (Arms.BleedResist * armsMultiplier.BleedMultiplier) + (Legs.BleedResist * legsMultiplier.BleedMultiplier)) + baseBleed;
-            specialDef.PoisnDef = (int)((rh1Weapon.PoisonResist * rh1Multiplier.PoisonRes) + (rh2Weapon.PoisonResist * rh2Multiplier.PoisonRes) + (lh1Weapon.PoisonResist * lh1Multiplier.PoisonRes) + (lh2Weapon.PoisonResist * lh2Multiplier.PoisonRes) + (Head.PoisonResist * headMultiplier.PoisonMultiplier) + (Body.PoisonResist * bodyMultiplier.PoisonMultiplier) + (Arms.PoisonResist * armsMultiplier.PoisonMultiplier) + (Legs.PoisonResist * legsMultiplier.PoisonMultiplier))+ basePoison;
-            specialDef.ToxicDef = (int)((rh1Weapon.ToxicResist * rh1Multiplier.ToxicRes) + (rh2Weapon.ToxicResist * rh2Multiplier.ToxicRes) + (lh1Weapon.ToxicResist * lh1Multiplier.ToxicRes) + (lh2Weapon.ToxicResist * lh2Multiplier.ToxicRes) + (Head.ToxicResist * headMultiplier.ToxicMultiplier) + (Body.ToxicResist * bodyMultiplier.ToxicMultiplier) + (Arms.ToxicResist * armsMultiplier.ToxicMultiplier) + (Legs.ToxicResist * legsMultiplier.ToxicMultiplier)) + baseToxic;
-            specialDef.CurseDef = (int)((rh1Weapon.CurseResist * rh1Multiplier.CurseRes) + (rh2Weapon.CurseResist * rh2Multiplier.CurseRes) + (lh1Weapon.CurseResist * lh1Multiplier.CurseRes) + (lh2Weapon.CurseResist * lh2Multiplier.CurseRes) + (Head.CurseResist * headMultiplier.CurseMultiplier) + (Body.CurseResist * bodyMultiplier.CurseMultiplier) + (Arms.CurseResist * armsMultiplier.CurseMultiplier) + (Legs.CurseResist * legsMultiplier.CurseMultiplier)) + baseCurse;
+            specialDef.BleedDef = (int)((rh1Weapon.BleedResist * rh1Multiplier.BleedRes) + (rh2Weapon.BleedResist * rh2Multiplier.BleedRes) + (lh1Weapon.BleedResist * lh1Multiplier.BleedRes) + (lh2Weapon.BleedResist * lh2Multiplier.BleedRes) + (Head.BleedResist * headMultiplier.BleedMultiplier) + (Body.BleedResist * bodyMultiplier.BleedMultiplier) + (Arms.BleedResist * armsMultiplier.BleedMultiplier) + (Legs.BleedResist * legsMultiplier.BleedMultiplier)) + specialDef.BleedDefBase;
+            specialDef.PoisnDef = (int)((rh1Weapon.PoisonResist * rh1Multiplier.PoisonRes) + (rh2Weapon.PoisonResist * rh2Multiplier.PoisonRes) + (lh1Weapon.PoisonResist * lh1Multiplier.PoisonRes) + (lh2Weapon.PoisonResist * lh2Multiplier.PoisonRes) + (Head.PoisonResist * headMultiplier.PoisonMultiplier) + (Body.PoisonResist * bodyMultiplier.PoisonMultiplier) + (Arms.PoisonResist * armsMultiplier.PoisonMultiplier) + (Legs.PoisonResist * legsMultiplier.PoisonMultiplier))+ specialDef.PoisnDefBase;
+            specialDef.ToxicDef = (int)((rh1Weapon.ToxicResist * rh1Multiplier.ToxicRes) + (rh2Weapon.ToxicResist * rh2Multiplier.ToxicRes) + (lh1Weapon.ToxicResist * lh1Multiplier.ToxicRes) + (lh2Weapon.ToxicResist * lh2Multiplier.ToxicRes) + (Head.ToxicResist * headMultiplier.ToxicMultiplier) + (Body.ToxicResist * bodyMultiplier.ToxicMultiplier) + (Arms.ToxicResist * armsMultiplier.ToxicMultiplier) + (Legs.ToxicResist * legsMultiplier.ToxicMultiplier)) + specialDef.ToxicDefBase;
+            specialDef.CurseDef = (int)((rh1Weapon.CurseResist * rh1Multiplier.CurseRes) + (rh2Weapon.CurseResist * rh2Multiplier.CurseRes) + (lh1Weapon.CurseResist * lh1Multiplier.CurseRes) + (lh2Weapon.CurseResist * lh2Multiplier.CurseRes) + (Head.CurseResist * headMultiplier.CurseMultiplier) + (Body.CurseResist * bodyMultiplier.CurseMultiplier) + (Arms.CurseResist * armsMultiplier.CurseMultiplier) + (Legs.CurseResist * legsMultiplier.CurseMultiplier)) + specialDef.CurseDefBase;
 
             return specialDef;
         }

@@ -52,7 +52,6 @@ namespace FromSoft_Game_Build_Planner
             set { SetValue(UpgradeProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Upgrade.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty UpgradeProperty =
             DependencyProperty.Register("Upgrade", typeof(int), typeof(ArmorControl), new PropertyMetadata(0));
 

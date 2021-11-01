@@ -13,62 +13,162 @@
             <Separator />
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Physical" Margin="0,0,19,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.PhysDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="DefenseModel.PhysDef"/>
+                            <Binding ElementName="DefControl" Path="DefenseModel.PhysDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="18,0,0,0" >
                 <StackPanel Margin="20,0,0,0" Orientation="Horizontal" >
                     <TextBlock Text="VS Strike" Margin="0,0,16,0"  Foreground="White"/>
-                    <Separator Foreground="White" Width="250" />
-                    <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.Strike}" Foreground="White"/>
+                    <Separator Foreground="White" Width="250" VerticalAlignment="Center">
+                        <Separator.RenderTransform>
+                            <ScaleTransform ScaleY="2"/>
+                        </Separator.RenderTransform>
+                    </Separator>
+                    <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.Strike}" Foreground="White"/>
                 </StackPanel>
                 <StackPanel Margin="20,0,0,0"  Orientation="Horizontal" >
                     <TextBlock Text="VS Slash" Margin="0,0,18,0" Foreground="White"/>
-                    <Separator Foreground="White" Width="250"/>
-                    <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.Slash}" Foreground="White"/>
+                    <Separator Foreground="White" Width="250" VerticalAlignment="Center">
+                        <Separator.RenderTransform>
+                            <ScaleTransform ScaleY="2"/>
+                        </Separator.RenderTransform>
+                    </Separator>
+                    <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.Slash}" Foreground="White"/>
                 </StackPanel>
                 <StackPanel Margin="20,0,0,0"  Orientation="Horizontal" >
                     <TextBlock Text="Vs Thrust" Margin="0,0,14,0" Foreground="White"/>
-                    <Separator Foreground="White" Width="250" />
-                    <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.Thrust}" Foreground="White"/>
+                    <Separator Foreground="White" Width="250"  VerticalAlignment="Center">
+                        <Separator.RenderTransform>
+                            <ScaleTransform ScaleY="2"/>
+                        </Separator.RenderTransform>
+                    </Separator>
+                    <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.Thrust}" Foreground="White"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Magic" Margin="0,0,28,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.MagDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="DefenseModel.MagDef"/>
+                            <Binding ElementName="DefControl" Path="DefenseModel.MagDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Fire" Margin="0,0,41,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.FireDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="DefenseModel.FireDef"/>
+                            <Binding ElementName="DefControl" Path="DefenseModel.FireDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Lightning" Margin="0,0,10,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.LightDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="DefenseModel.LightDef"/>
+                            <Binding ElementName="DefControl" Path="DefenseModel.LightDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
-            <TextBlock Text="Special Defense" FontSize="20"  Margin="0,25,0,0" Foreground="White"/>
+            <TextBlock Text="Special Defense" FontSize="20" Margin="0,25,0,0" Foreground="White"/>
             <Separator />
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Bleed" Margin="0,0,31,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=SpecialDefenseModel.BleedDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.BleedDef"/>
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.BleedDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Poison" Margin="0,0,25,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=SpecialDefenseModel.PoisnDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.PoisnDef"/>
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.PoisnDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Toxic" Margin="0,0,34,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=SpecialDefenseModel.ToxicDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.ToxicDef"/>
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.ToxicDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="25,0,0,0"  Orientation="Horizontal" >
                 <TextBlock Text="Curse" Margin="0,0,30,0" Foreground="White"/>
-                <Separator Foreground="White" Width="265"/>
-                <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=SpecialDefenseModel.CurseDef}" Foreground="White"/>
+                <Separator Foreground="White" Width="245" VerticalAlignment="Center">
+                    <Separator.RenderTransform>
+                        <ScaleTransform ScaleY="2"/>
+                    </Separator.RenderTransform>
+                </Separator>
+                <TextBlock Margin="10,0,0,0" TextAlignment="Right" Width="50" Foreground="White">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.CurseDef"/>
+                            <Binding ElementName="DefControl" Path="SpecialDefenseModel.CurseDefBase"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
         </StackPanel>
        
