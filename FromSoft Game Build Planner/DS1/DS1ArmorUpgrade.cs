@@ -14,10 +14,15 @@ namespace FromSoft_Game_Build_Planner
         public string Name { get; set; }
         public int ID { get; set; }
 
-        public float PhysicalMutliplier { get; set; }
-        public float MagicMutliplier { get; set; }
-        public float FireMutliplier { get; set; }
-        public float LightningMutliplier { get; set; }
+        public float PhysicalMultiplier { get; set; }
+        public float MagicMultiplier { get; set; }
+        public float FireMultiplier { get; set; }
+        public float LightningMultiplier { get; set; }
+
+        public float SlashMultiplier { get; set; }
+        public float BlowMultiplier { get; set; }
+        public float ThrustMultiplier { get; set; }
+
 
         public float PoisonMultiplier { get; set; }
         public float ToxicMultiplier { get; set; }
@@ -29,10 +34,14 @@ namespace FromSoft_Game_Build_Planner
             Name = armorReinforceParam.Name;
             ID = armorReinforceParam.ID;
 
-            PhysicalMutliplier = (float)armorReinforceParam.Cells[0].Value;
-            MagicMutliplier = (float)armorReinforceParam.Cells[1].Value;
-            FireMutliplier = (float)armorReinforceParam.Cells[2].Value;
-            LightningMutliplier = (float)armorReinforceParam.Cells[3].Value;
+            PhysicalMultiplier = (float)armorReinforceParam.Cells[0].Value;
+            MagicMultiplier = (float)armorReinforceParam.Cells[1].Value;
+            FireMultiplier = (float)armorReinforceParam.Cells[2].Value;
+            LightningMultiplier = (float)armorReinforceParam.Cells[3].Value;
+
+            SlashMultiplier = (float)armorReinforceParam.Cells[4].Value;
+            BlowMultiplier = (float)armorReinforceParam.Cells[5].Value;
+            ThrustMultiplier = (float)armorReinforceParam.Cells[6].Value;
 
             PoisonMultiplier = (float)armorReinforceParam.Cells[7].Value;
             ToxicMultiplier = (float)armorReinforceParam.Cells[8].Value;

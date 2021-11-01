@@ -130,12 +130,12 @@ namespace FromSoft_Game_Build_Planner
 
         public void Reload()
         {
-            var indexWeapon = cmbWeapon.Items.GetIndexByProperty<DS1Weapon>(x => x.ID == Weapon.ID);
-            var indexInfusion = cmbInfusion.Items.GetIndexByProperty<DS1Infusion>(x => x.Value == Infusion.Value);
+            var weapon = Weapon;
+            var infusion = Infusion;
             cmbWeapon.SelectedIndex = -1;
+            cmbWeapon.SelectedIndex = cmbWeapon.Items.GetIndexByProperty<DS1Weapon>(x => x.ID == weapon.ID);
             cmbInfusion.SelectedIndex = -1;
-            cmbWeapon.SelectedIndex = indexWeapon;
-            cmbInfusion.SelectedIndex = indexInfusion;
+            cmbInfusion.SelectedIndex = cmbInfusion.Items.GetIndexByProperty<DS1Infusion>(x => x.Value == infusion.Value);
         }
 
         private void ChangeWeapon()
@@ -324,9 +324,10 @@ namespace FromSoft_Game_Build_Planner
             HandleMinValue();
         }
 
-        private void HandleMinValue()
+        private void HandleMinValue() 
         {
-            nudUpgrade.Minimum = Max.IsChecked.Value ? Weapon.MaxUpgrade : 0;
+            var weapon = DS1Weapon.GetWeapon(Weapon, Infusion, Upgrade);
+            nudUpgrade.Minimum = Max.IsChecked.Value ? weapon.MaxUpgrade : 0;
         }
 
         private void WepControl_Loaded(object sender, RoutedEventArgs e)

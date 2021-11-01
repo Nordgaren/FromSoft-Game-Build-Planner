@@ -17,7 +17,10 @@ namespace FromSoft_Game_Build_Planner
 
         public int Humanity { get; set; }
 
-        public int Health { get { return (int)GetStatDamage(Vitality, 0, 100, 100, 100); } }
+        public int Health { get { 
+                var lol = Calculate(100, Vitality);
+                return (int)lol; } }
+
         public int Stamina {
             get
             {
@@ -260,7 +263,7 @@ namespace FromSoft_Game_Build_Planner
             set 
             { 
                 _rHandWeapon1 = value;
-                //RHandInfusion1 = DS1Infusion.All[0];
+                RHandInfusion1 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(RHandDamage1));
                 OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
@@ -287,6 +290,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _rHandUpgrade1 = value;
                 OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private bool _rHand2H_1;
@@ -312,7 +316,7 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _rHandWeapon2 = value;
-                //RHandInfusion2 = DS1Infusion.All[0];
+                RHandInfusion2 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(RHandDamage2));
                 OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(RHandWeapon2));
@@ -339,6 +343,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _rHandUpgrade2 = value;
                 OnPropertyChanged(nameof(RHandDamage2));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private bool _rHand2H_2;
@@ -369,7 +374,7 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _lHandWeapon1 = value;
-                //LHandInfusion1 = DS1Infusion.All[0];
+                LHandInfusion1 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(LHandDamage1));
                 OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
@@ -395,6 +400,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _lHandUpgrade1 = value;
                 OnPropertyChanged(nameof(LHandDamage1));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private bool _lHand2H_1;
@@ -420,7 +426,7 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _lHandWeapon2 = value;
-                //LHandInfusion2 = DS1Infusion.All[0];
+                LHandInfusion2 = DS1Infusion.All[0];
                 OnPropertyChanged(nameof(LHandDamage2));
                 OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
@@ -446,6 +452,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _lHandUpgrade2 = value;
                 OnPropertyChanged(nameof(LHandDamage2));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
         private bool _lHand2H_2;
@@ -460,7 +467,51 @@ namespace FromSoft_Game_Build_Planner
         }
         #endregion
 
-        public DS1DefenseModel DefenseModel { get { return new DS1DefenseModel(); } }
+        public DS1DefenseModel DefenseModel { get { return GetDefense(); } }
+
+        private DS1DefenseModel GetDefense()
+        {
+            var defModel = new DS1DefenseModel();
+
+            if (Head == null || Body == null || Arms == null || Legs == null)
+                return defModel;
+
+
+            var headInfusion = Head.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var headMultiplier = DS1ArmorUpgrade.ArmorUpgrades[headInfusion + HeadUpgrade];
+            var bodyInfusion = Body.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var bodyMultiplier = DS1ArmorUpgrade.ArmorUpgrades[bodyInfusion + BodyUpgrade];
+            var armsInfusion = Arms.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var armsMultiplier = DS1ArmorUpgrade.ArmorUpgrades[armsInfusion + ArmsUpgrade];
+            var legsInfusion = Legs.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var legsMultiplier = DS1ArmorUpgrade.ArmorUpgrades[legsInfusion + LegsUpgrade];
+
+            var max = 800;
+            var sum = Vitality + Attunement + Endurance  + Strength + Dexterity + Resistance + Intelligence + Faith + Humanity;
+            var phys = .9f * sum + .9f * Resistance;
+            phys = phys < max ? phys : max; 
+            var fire = .85f * sum + 1.35f * Faith;
+            fire = fire < max ? fire : max;
+            var magic = .85f * sum + 1.35f * Resistance;
+            magic = magic < max ? magic : max;
+            var light = sum < max ? sum : max;
+            var physicalBase = (int)Math.Round(Calculate(102, phys));
+            var magicBase = (int)Math.Round(Calculate(102, fire));
+            var fireBase = (int)Math.Round(Calculate(102, magic));
+            var lightningBase = (int)Math.Round(Calculate(102, light));
+
+            defModel.PhysDef = (int)((Head.PhysicalDefense * headMultiplier.PhysicalMultiplier) + (Body.PhysicalDefense * bodyMultiplier.PhysicalMultiplier) + (Arms.PhysicalDefense * armsMultiplier.PhysicalMultiplier) + (Legs.PhysicalDefense * legsMultiplier.PhysicalMultiplier)) + physicalBase;
+            defModel.Slash = (int)((Head.PhysicalDefense * (1 + Head.SlashDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.SlashMultiplier) + (Body.PhysicalDefense * (1 + Body.SlashDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.SlashMultiplier) + (Arms.PhysicalDefense * (1 + Arms.SlashDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.SlashMultiplier) + (Legs.PhysicalDefense * (1 + Legs.SlashDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.SlashMultiplier)) + physicalBase;
+            defModel.Strike = (int)((Head.PhysicalDefense * (1 + Head.BlowDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.BlowMultiplier) + (Body.PhysicalDefense * (1 + Body.BlowDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.BlowMultiplier) + (Arms.PhysicalDefense * (1 + Arms.BlowDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.BlowMultiplier) + (Legs.PhysicalDefense * (1 + Legs.BlowDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.BlowMultiplier)) + physicalBase;
+            defModel.Thrust = (int)((Head.PhysicalDefense * (1 + Head.ThrustDefense / 100f) * headMultiplier.PhysicalMultiplier * headMultiplier.ThrustMultiplier) + (Body.PhysicalDefense * (1 + Body.ThrustDefense / 100f) * bodyMultiplier.PhysicalMultiplier * bodyMultiplier.ThrustMultiplier) + (Arms.PhysicalDefense * (1 + Arms.ThrustDefense / 100f) * armsMultiplier.PhysicalMultiplier * armsMultiplier.ThrustMultiplier) + (Legs.PhysicalDefense * (1 + Legs.ThrustDefense / 100f) * legsMultiplier.PhysicalMultiplier * legsMultiplier.ThrustMultiplier)) + physicalBase;
+
+            defModel.MagDef = (int)((Head.MagicDefense * headMultiplier.MagicMultiplier) + (Body.MagicDefense * bodyMultiplier.MagicMultiplier) + (Arms.MagicDefense * armsMultiplier.MagicMultiplier) + (Legs.MagicDefense * legsMultiplier.MagicMultiplier)) + magicBase;
+            defModel.FireDef = (int)((Head.FireDefense * headMultiplier.FireMultiplier) + (Body.FireDefense * bodyMultiplier.FireMultiplier) + (Arms.FireDefense * armsMultiplier.FireMultiplier) + (Legs.FireDefense * legsMultiplier.FireMultiplier)) + fireBase;
+            defModel.LightDef = (int)((Head.LightningDefense * headMultiplier.LightningMultiplier) + (Body.LightningDefense * bodyMultiplier.LightningMultiplier) + (Arms.LightningDefense * armsMultiplier.LightningMultiplier) + (Legs.LightningDefense * legsMultiplier.LightningMultiplier)) + lightningBase;
+
+
+            return defModel;
+        }
 
         public DS1SpecialDefenseModel SpecialDefenseModel { get { return GetSpecialDefense(); } }
 
@@ -468,7 +519,7 @@ namespace FromSoft_Game_Build_Planner
         {
             var specialDef = new DS1SpecialDefenseModel();
 
-            if (RHandInfusion1 == null || RHandInfusion2 == null || LHandInfusion1 == null || LHandInfusion2 == null)
+            if (RHandInfusion1 == null || RHandInfusion2 == null || LHandInfusion1 == null || LHandInfusion2 == null || Head == null || Body == null || Arms == null || Legs == null)
                 return specialDef;
 
             var rh1Weapon = DS1Weapon.GetWeapon(RHandWeapon1, RHandInfusion1, RHandUpgrade1);
@@ -490,13 +541,15 @@ namespace FromSoft_Game_Build_Planner
             var legsInfusion = Legs.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
             var legsMultiplier = DS1ArmorUpgrade.ArmorUpgrades[legsInfusion + LegsUpgrade];
 
+            var baseBleed = (int)Math.Round(Calculate(112, Endurance));
+            var basePoison = (int)Math.Round(Calculate(110, Resistance));
+            var baseToxic = (int)Math.Round(Calculate(111, Resistance));
+            var baseCurse = (int)Math.Round(Calculate(113, Humanity > 30 ? Humanity : 30));
 
-            if (rh1Weapon == null || rh2Weapon == null || lh1Weapon == null || lh2Weapon == null || Head == null || Body == null || Arms == null || Legs == null)
-                return specialDef;
-
-            specialDef.BleedDef = (int)((rh1Weapon.BleedResist * rh1Multiplier.BleedRes) + (rh2Weapon.BleedResist * rh2Multiplier.BleedRes) + (lh1Weapon.BleedResist * lh1Multiplier.BleedRes) + (lh2Weapon.BleedResist * lh2Multiplier.BleedRes) + (Head.BleedResist * headMultiplier.BleedMultiplier) + (Body.BleedResist * bodyMultiplier.BleedMultiplier) + (Arms.BleedResist * armsMultiplier.BleedMultiplier) + (Legs.BleedResist* legsMultiplier.BleedMultiplier));
-            specialDef.PoisonDef = (int)((rh1Weapon.PoisonResist * rh1Multiplier.PoisonRes) + (rh2Weapon.PoisonResist * rh2Multiplier.PoisonRes) + (lh1Weapon.PoisonResist * lh1Multiplier.PoisonRes) + (lh2Weapon.PoisonResist * lh2Multiplier.PoisonRes) + (Head.PoisonResist * headMultiplier.PoisonMultiplier) + (Body.PoisonResist * bodyMultiplier.PoisonMultiplier) + (Arms.PoisonResist * armsMultiplier.PoisonMultiplier) + (Legs.PoisonResist* legsMultiplier.PoisonMultiplier));
-            specialDef.CurseDef = (int)((rh1Weapon.CurseResist * rh1Multiplier.CurseRes) + (rh2Weapon.CurseResist * rh2Multiplier.CurseRes) + (lh1Weapon.CurseResist * lh1Multiplier.CurseRes) + (lh2Weapon.CurseResist * lh2Multiplier.CurseRes) + (Head.CurseResist * headMultiplier.CurseMultiplier) + (Body.CurseResist * bodyMultiplier.CurseMultiplier) + (Arms.CurseResist * armsMultiplier.CurseMultiplier) + (Legs.CurseResist* legsMultiplier.CurseMultiplier));
+            specialDef.BleedDef = (int)((rh1Weapon.BleedResist * rh1Multiplier.BleedRes) + (rh2Weapon.BleedResist * rh2Multiplier.BleedRes) + (lh1Weapon.BleedResist * lh1Multiplier.BleedRes) + (lh2Weapon.BleedResist * lh2Multiplier.BleedRes) + (Head.BleedResist * headMultiplier.BleedMultiplier) + (Body.BleedResist * bodyMultiplier.BleedMultiplier) + (Arms.BleedResist * armsMultiplier.BleedMultiplier) + (Legs.BleedResist * legsMultiplier.BleedMultiplier)) + baseBleed;
+            specialDef.PoisnDef = (int)((rh1Weapon.PoisonResist * rh1Multiplier.PoisonRes) + (rh2Weapon.PoisonResist * rh2Multiplier.PoisonRes) + (lh1Weapon.PoisonResist * lh1Multiplier.PoisonRes) + (lh2Weapon.PoisonResist * lh2Multiplier.PoisonRes) + (Head.PoisonResist * headMultiplier.PoisonMultiplier) + (Body.PoisonResist * bodyMultiplier.PoisonMultiplier) + (Arms.PoisonResist * armsMultiplier.PoisonMultiplier) + (Legs.PoisonResist * legsMultiplier.PoisonMultiplier))+ basePoison;
+            specialDef.ToxicDef = (int)((rh1Weapon.ToxicResist * rh1Multiplier.ToxicRes) + (rh2Weapon.ToxicResist * rh2Multiplier.ToxicRes) + (lh1Weapon.ToxicResist * lh1Multiplier.ToxicRes) + (lh2Weapon.ToxicResist * lh2Multiplier.ToxicRes) + (Head.ToxicResist * headMultiplier.ToxicMultiplier) + (Body.ToxicResist * bodyMultiplier.ToxicMultiplier) + (Arms.ToxicResist * armsMultiplier.ToxicMultiplier) + (Legs.ToxicResist * legsMultiplier.ToxicMultiplier)) + baseToxic;
+            specialDef.CurseDef = (int)((rh1Weapon.CurseResist * rh1Multiplier.CurseRes) + (rh2Weapon.CurseResist * rh2Multiplier.CurseRes) + (lh1Weapon.CurseResist * lh1Multiplier.CurseRes) + (lh2Weapon.CurseResist * lh2Multiplier.CurseRes) + (Head.CurseResist * headMultiplier.CurseMultiplier) + (Body.CurseResist * bodyMultiplier.CurseMultiplier) + (Arms.CurseResist * armsMultiplier.CurseMultiplier) + (Legs.CurseResist * legsMultiplier.CurseMultiplier)) + baseCurse;
 
             return specialDef;
         }
@@ -507,6 +560,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _head = value;
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
@@ -519,6 +573,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _headUpgrade = value;
                 OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(DefenseModel));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
 
@@ -530,6 +586,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _body = value;
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
@@ -542,6 +599,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _bodyUpgrade = value;
                 OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(DefenseModel));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
 
@@ -553,6 +612,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _arms = value;
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
@@ -565,6 +625,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _armsUpgrade = value;
                 OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(DefenseModel));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
 
@@ -576,6 +638,7 @@ namespace FromSoft_Game_Build_Planner
             {
                 _legs = value;
                 OnPropertyChanged(nameof(EquipPercent));
+                OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
@@ -588,6 +651,8 @@ namespace FromSoft_Game_Build_Planner
             {
                 _legsUpgrade = value;
                 OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(DefenseModel));
+                OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
 
@@ -629,12 +694,7 @@ namespace FromSoft_Game_Build_Planner
             sl += Faith - Class.BaseFai;
             return sl;
         }
-
-        public void LoadChr()
-        {
-            
-        }
-
+        
         public DS1DamageModel CalculatAR(DS1Weapon weapon, DS1Infusion infusion, int upgrade, bool _2h)
         {
             weapon = DS1Weapon.GetWeapon(weapon, infusion, upgrade);
@@ -679,7 +739,8 @@ namespace FromSoft_Game_Build_Planner
                 var humanityScaling = 0f;
                 if (weapon.HumanityScaling)
                     humanityScaling = (float)GetHumanityDamage(faiAdj, intAdj, magicAttack); ;
-                magAdj += faiAdj + intAdj + humanityScaling;
+                var scalingAdj = faiAdj.DSRound() + intAdj.DSRound();
+                magAdj += scalingAdj + humanityScaling.DSRound();
                 damage.MagAdjust = (int)magAdj;
                 return damage;
             }
@@ -693,9 +754,9 @@ namespace FromSoft_Game_Build_Planner
                 var dexDMG = GetStatDamage(Dexterity, weapon.DexRequired, dexScaling, weapon.CorrectType, physAttack);
                 var humanityScaling = 0f;
                 if (weapon.HumanityScaling)
-                    humanityScaling = (float)GetHumanityDamage(strDMG, dexDMG, magicAttack);
-                var scalingDMG = strDMG + dexDMG;
-                physAttack += scalingDMG;
+                    humanityScaling = (float)GetHumanityDamage(strDMG, dexDMG, physAttack);
+                var scalingDMG = strDMG.DSRound() + dexDMG.DSRound();
+                physAttack += scalingDMG + humanityScaling.DSRound();
                 damage.PhysAR = (int)physAttack;
             }
 
@@ -708,8 +769,8 @@ namespace FromSoft_Game_Build_Planner
                 var humanityScaling = 0f;
                 if (weapon.HumanityScaling)
                     humanityScaling = (float)GetHumanityDamage(intDMG, faiDMG, magicAttack);
-                var scalingDMG = intDMG + faiDMG;
-                magicAttack += scalingDMG + humanityScaling;
+                var scalingDMG = intDMG.DSRound() + faiDMG.DSRound();
+                magicAttack += scalingDMG + humanityScaling.DSRound();
                 damage.MagAR = (int)magicAttack;
             }
 
@@ -719,12 +780,12 @@ namespace FromSoft_Game_Build_Planner
                 var intDMG = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
                 var humanityScaling = 0f;
                 if (weapon.HumanityScaling)
-                    humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, magicAttack);
-                var scalingDMG = intDMG;
-                fireAttack += scalingDMG + humanityScaling;
+                    humanityScaling = (float)GetHumanityDamage(intDMG, intDMG, fireAttack);
+                var scalingDMG = intDMG.DSRound();
+                fireAttack += scalingDMG + humanityScaling.DSRound();
                 var magAdjust = GetStatDamage(Intelligence, weapon.IntRequired, intScaling, weapon.CorrectType, fireAttack);
-                damage.FireAR = (int)fireAttack;
-                damage.MagAdjust = (int)(100 + weapon.IntScaling);
+                damage.FireAR = (int)fireAttack.DSRound();
+                damage.MagAdjust = (int)(100 + weapon.IntScaling).DSRound();
                 return damage;
             }
 
@@ -796,6 +857,90 @@ namespace FromSoft_Game_Build_Planner
             }
         }
 
+        public float CalculateOutput(float stageMin, float stageMax, float valMin, float valMax, float inputVal, float multValMin, float multValMax)
+        {
+            float output;
+            //v3 (perfect. no mults)
+            /*
+            decimal inputRatio = (inputVal - stageMin) / (stageMax - stageMin);
+            output = valMin + ((valMax - valMin) * inputRatio); //standard output
+            */
+
+            //v11
+            float inputRatio = (inputVal - stageMin) / (stageMax - stageMin);
+            float growthVal;
+
+            //calculate differently depending on if mult val is negative or positive
+            if (multValMin > 0)
+                growthVal = (float)Math.Pow(inputRatio, multValMin);
+            else
+                growthVal = 1 - (float)Math.Pow(1 - inputRatio, (float)Math.Abs(multValMin));
+
+            output = valMin + ((valMax - valMin) * growthVal); //standard output
+
+            //System.Diagnostics.Debug.WriteLine("raw output: " + output);
+
+            return output;
+        }
+
+        private float Calculate(int correctType, float input)
+        {
+
+            var dS1CalcCorrect = DS1CalcCorrect.CalcCorrectGraph[correctType];
+
+            float stageVal0 = dS1CalcCorrect.stgMaxVal0;
+            float stageVal1 = dS1CalcCorrect.stgMaxVal1;
+            float stageVal2 = dS1CalcCorrect.stgMaxVal2;
+            float stageVal3 = dS1CalcCorrect.stgMaxVal3;
+            float stageVal4 = dS1CalcCorrect.stgMaxVal4;
+            float growVal0 = dS1CalcCorrect.stgMaxValGrow0;
+            float growVal1 = dS1CalcCorrect.stgMaxValGrow1;
+            float growVal2 = dS1CalcCorrect.stgMaxValGrow2;
+            float growVal3 = dS1CalcCorrect.stgMaxValGrow3;
+            float growVal4 = dS1CalcCorrect.stgMaxValGrow4;
+            float multVal0 = dS1CalcCorrect.adjPt_MaxValGrow0;
+            float multVal1 = dS1CalcCorrect.adjPt_MaxValGrow1;
+            float multVal2 = dS1CalcCorrect.adjPt_MaxValGrow2;
+            float multVal3 = dS1CalcCorrect.adjPt_MaxValGrow3;
+            float multVal4 = dS1CalcCorrect.adjPt_MaxValGrow4;
+            float inputVal = input;
+
+            //error check. if stage max and min are the same then it will divide by zero
+            if (stageVal0 >= stageVal1 || stageVal1 >= stageVal2 || stageVal2 >= stageVal3 || stageVal3 >= stageVal4)
+            {
+                //error: stage values not valid
+                return 0f;
+            }
+            else if (inputVal < stageVal0)
+            {
+                //error: input is less than stage 0
+                return 0f;
+            }
+            else if (inputVal <= stageVal1)
+            {
+                //stage 0-1
+                return CalculateOutput(stageVal0, stageVal1, growVal0, growVal1, inputVal, multVal0, multVal1);
+            }
+            else if (inputVal <= stageVal2)
+            {
+                //stage 1-2
+                return CalculateOutput(stageVal1, stageVal2, growVal1, growVal2, inputVal, multVal1, multVal2);
+            }
+            else if (inputVal <= stageVal3)
+            {
+                //stage 2-3
+                return CalculateOutput(stageVal2, stageVal3, growVal2, growVal3, inputVal, multVal2, multVal3);
+            }
+            else if (inputVal <= stageVal4)
+            {
+                //stage 3-4 (and edge case beyond)
+                return CalculateOutput(stageVal3, stageVal4, growVal3, growVal4, inputVal, multVal3, multVal4);
+            }
+            else
+            {
+                return 0f;
+            }
+        }
         public override string ToString()
         {
             return Name;

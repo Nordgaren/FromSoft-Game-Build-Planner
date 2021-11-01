@@ -28,5 +28,10 @@ namespace FromSoft_Game_Build_Planner
             var json = JsonConvert.SerializeObject(other);
             return JsonConvert.DeserializeObject<T>(json);
         }
+
+        public static float DSRound(this float number)
+        {
+            return (float)Math.Round(number, 2);
+        }
     }
 }

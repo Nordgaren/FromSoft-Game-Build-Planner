@@ -9,7 +9,8 @@ namespace FromSoft_Game_Build_Planner
     public class DS1SpecialDefenseModel
     {
         public int BleedDef { get; set; }
-        public int PoisonDef { get; set; }
+        public int PoisnDef { get; set; }
+        public int ToxicDef { get; set; }
         public int CurseDef { get; set; }
     }
 }
