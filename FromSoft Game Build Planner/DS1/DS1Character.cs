@@ -538,7 +538,7 @@ namespace FromSoft_Game_Build_Planner
         {
             var specialDef = new DS1SpecialDefenseModel();
 
-            if (RHandInfusion1 == null || RHandInfusion2 == null || LHandInfusion1 == null || LHandInfusion2 == null || Head == null || Body == null || Arms == null || Legs == null)
+            if (RHandWeapon1 == null || RHandWeapon2 == null || LHandWeapon1 == null || LHandWeapon2 == null || RHandInfusion1 == null || RHandInfusion2 == null || LHandInfusion1 == null || LHandInfusion2 == null || Head == null || Body == null || Arms == null || Legs == null)
                 return specialDef;
 
             var rh1Weapon = DS1Weapon.GetWeapon(RHandWeapon1, RHandInfusion1, RHandUpgrade1);

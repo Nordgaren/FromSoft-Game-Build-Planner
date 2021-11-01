@@ -21,6 +21,7 @@ using SoulsFormats;
 using SharpDX.Direct3D9;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace FromSoft_Game_Build_Planner
 {
@@ -93,5 +94,60 @@ namespace FromSoft_Game_Build_Planner
             CloseControl();
         }
 
+        public void ResetArmor()
+        {
+            acHead.Reset();
+            acBody.Reset();
+            acArms.Reset();
+            acLegs.Reset();
+        }
+
+        public void ResetWeapons()
+        {
+            wcRH1.Reset();
+            wcRH2.Reset();
+            wcLH1.Reset();
+            wcLH2.Reset();
+        }
+
+        public void ResetStats()
+        {
+            nudVit.Value = nudVit.Minimum;
+            nudAtt.Value = nudAtt.Minimum;
+            nudEnd.Value = nudEnd.Minimum;
+            nudStr.Value = nudStr.Minimum;
+            nudDex.Value = nudDex.Minimum;
+            nudRes.Value = nudRes.Minimum;
+            nudInt.Value = nudInt.Minimum;
+            nudFai.Value = nudFai.Minimum;
+        }
+
+        public void ResetCharacter()
+        {
+            ViewModel.Chr = new DS1Character();
+            ResetArmor();
+            ResetWeapons();
+            cmbClass.SelectedIndex = 0;
+            ResetStats();
+            nudHumanity.Value = 0;
+        }
+
+        public void SaveCharacter()
+        {
+            var path = MainWindow.SaveFiles("Build", "json", "Select path to save character");
+
+            var jsonString = JsonConvert.SerializeObject(ViewModel.Chr, Formatting.Indented);
+
+            File.WriteAllText(path, jsonString);
+        }
+
+        public void LoadCharacter()
+        {
+            var path = MainWindow.OpenFiles("Build", "json", "Select saved character");
+            var jsonString = File.ReadAllText(path);
+
+            ViewModel.Chr = JsonConvert.DeserializeObject<DS1Character>(jsonString);
+            ReloadControls();
+        }
     }
 }

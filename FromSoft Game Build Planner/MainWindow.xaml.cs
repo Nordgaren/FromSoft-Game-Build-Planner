@@ -43,7 +43,7 @@ namespace FromSoft_Game_Build_Planner
             bool result;
             if (string.IsNullOrWhiteSpace(exePath))
             {
-                exePath = BrowseFiles();
+                exePath = OpenFiles("Game EXE", "exe", "Select Game.exe");
                 result = StartPlanner(exePath);
             }
             else
@@ -58,9 +58,35 @@ namespace FromSoft_Game_Build_Planner
             MainWindowContent.Content = CurrentPlanner;
         }
 
-        public static string BrowseFiles()
+        public static string OpenFiles(string name, string ext, string title)
         {
             var ofd = new OpenFileDialog();
+
+            ofd.FileName = name;
+            ofd.DefaultExt = ext;
+            ofd.Title = title;
+            ofd.Filter = $"{ext}(*.{ext}) | *.{ext}";
+            ofd.AddExtension = true;
+
+            var result = ofd.ShowDialog();
+
+            if (result.HasValue)
+            {
+                return ofd.FileName;
+            }
+
+            return null;
+        }
+
+        public static string SaveFiles(string name, string ext, string title)
+        {
+            var ofd = new SaveFileDialog();
+
+            ofd.FileName = name;
+            ofd.DefaultExt = ext;
+            ofd.Title = title;
+            ofd.Filter = $"{ext}(*.{ext}) | *.{ext}";
+            ofd.AddExtension = true;
 
             var result = ofd.ShowDialog();
 
@@ -97,7 +123,7 @@ namespace FromSoft_Game_Build_Planner
             else
             {
                 MessageBox.Show("No Supported game detected");
-                exePath = BrowseFiles();
+                exePath = OpenFiles("Game EXE", "exe", "Select Game.exe");
                 return StartPlanner(exePath);
             }
         }
@@ -124,7 +150,7 @@ namespace FromSoft_Game_Build_Planner
 
         private void SelectExe_Click(object sender, RoutedEventArgs e)
         {
-            var exePath = BrowseFiles();
+            var exePath = OpenFiles("Game EXE", "exe", "Select Game.exe");
             UserSettings.LocalUserSettings.LastExePath = exePath;
             var result = StartPlanner(exePath);
             if (!result)
@@ -154,5 +180,40 @@ namespace FromSoft_Game_Build_Planner
             contextMenu.IsOpen = true;
         }
 
+        private void ResetCharacter(object sender, RoutedEventArgs e)
+        {
+            var planner = CurrentPlanner as IFSPlanner;
+            planner.ResetCharacter();
+        }
+
+        private void ResetStats(object sender, RoutedEventArgs e)
+        {
+            var planner = CurrentPlanner as IFSPlanner;
+            planner.ResetStats();
+        }
+
+        private void ResetWeapons(object sender, RoutedEventArgs e)
+        {
+            var planner = CurrentPlanner as IFSPlanner;
+            planner.ResetWeapons();
+        }
+
+        private void ResetArmor(object sender, RoutedEventArgs e)
+        {
+            var planner = CurrentPlanner as IFSPlanner;
+            planner.ResetArmor();
+        }
+
+        private void SaveCharacter(object sender, RoutedEventArgs e)
+        {
+            var planner = CurrentPlanner as IFSPlanner;
+            planner.SaveCharacter();
+        }
+
+        private void LoadCharacter(object sender, RoutedEventArgs e)
+        {
+            var planner = CurrentPlanner as IFSPlanner;
+            planner.LoadCharacter();
+        }
     }
 }

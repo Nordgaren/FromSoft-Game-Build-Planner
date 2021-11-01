@@ -101,6 +101,11 @@ namespace FromSoft_Game_Build_Planner
             }
         }
 
+        internal void Reset()
+        {
+            cmbArmor.SelectedIndex = 0;
+        }
+
         private void cmbArmor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             nudUpgrade.Minimum = 0;

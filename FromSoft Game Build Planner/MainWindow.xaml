@@ -62,8 +62,30 @@
                             <MenuItem Header="Select Executeable" Click="SelectExe_Click"/>
                             <MenuItem Header="Reload Params" Click="Reload_Click"/>
                             <Separator />
-                            <MenuItem Header="Save Character" />
-                            <MenuItem Header="Reload Character" />
+                            <MenuItem Header="Save Character" Click="SaveCharacter" />
+                            <MenuItem Header="Load Character" Click="LoadCharacter" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <Button Grid.RowSpan="4" x:Name="Planner" Style="{DynamicResource MenuButtons}" Content="Planner"
+                           Foreground="White"
+                           Grid.Column="2"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           ContextMenuService.IsEnabled="False"
+                           ContextMenuService.Placement="Bottom"
+                           ContextMenuService.PlacementTarget="{Binding ElementName=Menu}"
+                           ContextMenuService.ShowOnDisabled="True"
+                           Click="Menu_Click">
+                    <Button.ContextMenu>
+                        <ContextMenu Style="{DynamicResource ContextMenuTheme}">
+                            <MenuItem Header="Reset Character" Click="ResetCharacter"/>
+                            <Separator />
+                            <MenuItem Header="Reset Stats" Click="ResetStats"/>
+                            <Separator />
+                            <MenuItem Header="Reset Weapons" Click="ResetWeapons"/>
+                            <Separator />
+                            <MenuItem Header="Reset Armor" Click="ResetArmor"/>
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>

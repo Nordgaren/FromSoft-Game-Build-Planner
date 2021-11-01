@@ -9,5 +9,11 @@ namespace FromSoft_Game_Build_Planner
     interface IFSPlanner
     {
         public abstract void Reload();
+        void ResetArmor();
+        void ResetWeapons();
+        void ResetStats();
+        void ResetCharacter();
+        void SaveCharacter();
+        void LoadCharacter();
     }
 }

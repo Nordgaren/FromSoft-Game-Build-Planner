@@ -81,6 +81,11 @@ namespace FromSoft_Game_Build_Planner
         public static readonly DependencyProperty TwoHandProperty =
             DependencyProperty.Register("TwoHand", typeof(bool), typeof(WeaponControl), new PropertyMetadata(default(bool)));
 
+        internal void Reset()
+        {
+            cmbWeapon.SelectedIndex = 0;
+        }
+
         public int Upgrade
         {
             get { return (int)GetValue(UpgradeProperty); }
