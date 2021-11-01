@@ -29,7 +29,7 @@
                 </StackPanel>
                 <StackPanel Margin="20,0,0,0"  Orientation="Horizontal" >
                     <TextBlock Text="Vs Thrust" Margin="0,0,14,0" Foreground="White"/>
-                    <Separator Foreground="White" Width="250"/>
+                    <Separator Foreground="White" Width="250" />
                     <TextBlock Margin="10,0,0,0" TextAlignment="Center" Width="30" Text="{Binding ElementName=DefControl, Path=DefenseModel.Thrust}" Foreground="White"/>
                 </StackPanel>
             </StackPanel>

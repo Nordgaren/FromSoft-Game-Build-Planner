@@ -468,17 +468,35 @@ namespace FromSoft_Game_Build_Planner
         {
             var specialDef = new DS1SpecialDefenseModel();
 
-            var RH1Weapon = DS1Weapon.GetWeapon(RHandWeapon1, RHandInfusion1, RHandUpgrade1);
-            var RH2Weapon = DS1Weapon.GetWeapon(RHandWeapon2, RHandInfusion2, RHandUpgrade2);
-            var LH1Weapon = DS1Weapon.GetWeapon(LHandWeapon1, LHandInfusion1, LHandUpgrade1);
-            var LH2Weapon = DS1Weapon.GetWeapon(LHandWeapon2, LHandInfusion2, LHandUpgrade2);
-
-            if (RH1Weapon == null || RH2Weapon == null || LH1Weapon == null || LH2Weapon == null || Head == null || Body == null || Arms == null || Legs == null)
+            if (RHandInfusion1 == null || RHandInfusion2 == null || LHandInfusion1 == null || LHandInfusion2 == null)
                 return specialDef;
 
-            specialDef.BleedDef = RH1Weapon.BleedResist + RH2Weapon.BleedResist + LH1Weapon.BleedResist + LH2Weapon.BleedResist + Head.BleedResist + Body.BleedResist + Arms.BleedResist + Legs.BleedResist;
-            specialDef.PoisonDef = RH1Weapon.PoisonResist + RH2Weapon.PoisonResist + LH1Weapon.PoisonResist + LH2Weapon.PoisonResist + Head.PoisonResist + Body.PoisonResist + Arms.PoisonResist + Legs.PoisonResist;
-            specialDef.CurseDef = RH1Weapon.CurseResist + RH2Weapon.CurseResist + LH1Weapon.CurseResist + LH2Weapon.CurseResist + Head.CurseResist + Body.CurseResist + Arms.CurseResist + Legs.CurseResist;
+            var rh1Weapon = DS1Weapon.GetWeapon(RHandWeapon1, RHandInfusion1, RHandUpgrade1);
+            var rh2Weapon = DS1Weapon.GetWeapon(RHandWeapon2, RHandInfusion2, RHandUpgrade2);
+            var lh1Weapon = DS1Weapon.GetWeapon(LHandWeapon1, LHandInfusion1, LHandUpgrade1);
+            var lh2Weapon = DS1Weapon.GetWeapon(LHandWeapon2, LHandInfusion2, LHandUpgrade2);
+
+            var rh1Multiplier = DS1WeaponUpgrade.WeaponUpgrades[RHandInfusion1.Value + RHandUpgrade1];
+            var rh2Multiplier = DS1WeaponUpgrade.WeaponUpgrades[RHandInfusion2.Value + LHandUpgrade2];
+            var lh1Multiplier = DS1WeaponUpgrade.WeaponUpgrades[LHandInfusion1.Value + RHandUpgrade1];
+            var lh2Multiplier = DS1WeaponUpgrade.WeaponUpgrades[LHandInfusion2.Value + LHandUpgrade2];
+
+            var headInfusion = Head.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var headMultiplier = DS1ArmorUpgrade.ArmorUpgrades[headInfusion + HeadUpgrade];
+            var bodyInfusion = Body.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var bodyMultiplier = DS1ArmorUpgrade.ArmorUpgrades[bodyInfusion + BodyUpgrade];
+            var armsInfusion = Arms.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var armsMultiplier = DS1ArmorUpgrade.ArmorUpgrades[armsInfusion + ArmsUpgrade];
+            var legsInfusion = Legs.UpgradePath == DS1Armor.Upgrade.Unique ? 100 : 0;
+            var legsMultiplier = DS1ArmorUpgrade.ArmorUpgrades[legsInfusion + LegsUpgrade];
+
+
+            if (rh1Weapon == null || rh2Weapon == null || lh1Weapon == null || lh2Weapon == null || Head == null || Body == null || Arms == null || Legs == null)
+                return specialDef;
+
+            specialDef.BleedDef = (int)((rh1Weapon.BleedResist * rh1Multiplier.BleedRes) + (rh2Weapon.BleedResist * rh2Multiplier.BleedRes) + (lh1Weapon.BleedResist * lh1Multiplier.BleedRes) + (lh2Weapon.BleedResist * lh2Multiplier.BleedRes) + (Head.BleedResist * headMultiplier.BleedMultiplier) + (Body.BleedResist * bodyMultiplier.BleedMultiplier) + (Arms.BleedResist * armsMultiplier.BleedMultiplier) + (Legs.BleedResist* legsMultiplier.BleedMultiplier));
+            specialDef.PoisonDef = (int)((rh1Weapon.PoisonResist * rh1Multiplier.PoisonRes) + (rh2Weapon.PoisonResist * rh2Multiplier.PoisonRes) + (lh1Weapon.PoisonResist * lh1Multiplier.PoisonRes) + (lh2Weapon.PoisonResist * lh2Multiplier.PoisonRes) + (Head.PoisonResist * headMultiplier.PoisonMultiplier) + (Body.PoisonResist * bodyMultiplier.PoisonMultiplier) + (Arms.PoisonResist * armsMultiplier.PoisonMultiplier) + (Legs.PoisonResist* legsMultiplier.PoisonMultiplier));
+            specialDef.CurseDef = (int)((rh1Weapon.CurseResist * rh1Multiplier.CurseRes) + (rh2Weapon.CurseResist * rh2Multiplier.CurseRes) + (lh1Weapon.CurseResist * lh1Multiplier.CurseRes) + (lh2Weapon.CurseResist * lh2Multiplier.CurseRes) + (Head.CurseResist * headMultiplier.CurseMultiplier) + (Body.CurseResist * bodyMultiplier.CurseMultiplier) + (Arms.CurseResist * armsMultiplier.CurseMultiplier) + (Legs.CurseResist* legsMultiplier.CurseMultiplier));
 
             return specialDef;
         }
@@ -490,6 +508,17 @@ namespace FromSoft_Game_Build_Planner
                 _head = value;
                 OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
+            }
+        }
+
+        private int _headUpgrade;
+        public int HeadUpgrade
+        {
+            get { return _headUpgrade; }
+            set
+            {
+                _headUpgrade = value;
+                OnPropertyChanged(nameof(RHandDamage1));
             }
         }
 
@@ -505,6 +534,17 @@ namespace FromSoft_Game_Build_Planner
             }
         }
 
+        private int _bodyUpgrade;
+        public int BodyUpgrade
+        {
+            get { return _bodyUpgrade; }
+            set
+            {
+                _bodyUpgrade = value;
+                OnPropertyChanged(nameof(RHandDamage1));
+            }
+        }
+
         private DS1Armor _arms;
         public DS1Armor Arms
         {
@@ -514,6 +554,17 @@ namespace FromSoft_Game_Build_Planner
                 _arms = value;
                 OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
+            }
+        }
+
+        private int _armsUpgrade;
+        public int ArmsUpgrade
+        {
+            get { return _armsUpgrade; }
+            set
+            {
+                _armsUpgrade = value;
+                OnPropertyChanged(nameof(RHandDamage1));
             }
         }
 
@@ -528,7 +579,17 @@ namespace FromSoft_Game_Build_Planner
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
         }
-        
+
+        private int _legsUpgrade;
+        public int LegsUpgrade
+        {
+            get { return _legsUpgrade; }
+            set
+            {
+                _legsUpgrade = value;
+                OnPropertyChanged(nameof(RHandDamage1));
+            }
+        }
 
         public DS1Ring Ring1 { get; set; }
         public DS1Ring Ring2 { get; set; }

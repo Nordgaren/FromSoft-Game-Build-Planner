@@ -60,10 +60,10 @@
                 <TextBox Text="Armor" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>
                 <Separator Width="500"/>
                 <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
-                    <local:ArmorControl x:Name="acHead" Armor="{Binding Chr.Head, Mode=TwoWay}" ArmorList="{Binding HeadList, Mode=TwoWay}"/>
-                    <local:ArmorControl x:Name="acBody" Armor="{Binding Chr.Body, Mode=TwoWay}" ArmorList="{Binding BodyList, Mode=TwoWay}"/>
-                    <local:ArmorControl x:Name="acArms" Armor="{Binding Chr.Arms, Mode=TwoWay}" ArmorList="{Binding ArmsList, Mode=TwoWay}"/>
-                    <local:ArmorControl x:Name="acLegs" Armor="{Binding Chr.Legs, Mode=TwoWay}" ArmorList="{Binding LegsList, Mode=TwoWay}"/>
+                    <local:ArmorControl x:Name="acHead" Armor="{Binding Chr.Head, Mode=TwoWay}" Upgrade="{Binding Chr.HeadUpgrade}" ArmorList="{Binding HeadList, Mode=TwoWay}"/>
+                    <local:ArmorControl x:Name="acBody" Armor="{Binding Chr.Body, Mode=TwoWay}" Upgrade="{Binding Chr.BodyUpgrade}" ArmorList="{Binding BodyList, Mode=TwoWay}"/>
+                    <local:ArmorControl x:Name="acArms" Armor="{Binding Chr.Arms, Mode=TwoWay}" Upgrade="{Binding Chr.ArmsUpgrade}" ArmorList="{Binding ArmsList, Mode=TwoWay}"/>
+                    <local:ArmorControl x:Name="acLegs" Armor="{Binding Chr.Legs, Mode=TwoWay}" Upgrade="{Binding Chr.LegsUpgrade}" ArmorList="{Binding LegsList, Mode=TwoWay}"/>
                 </StackPanel>
                 
                 <TextBox Text="Rings" Width="400" TextAlignment="Left" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="20"/>

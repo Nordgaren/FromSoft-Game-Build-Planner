@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace FromSoft_Game_Build_Planner
 {
-    class DS1ArmorUpgrade
+    public class DS1ArmorUpgrade
     {
+        public static Dictionary<int, DS1ArmorUpgrade> ArmorUpgrades;
+
         public string Name { get; set; }
         public int ID { get; set; }
 

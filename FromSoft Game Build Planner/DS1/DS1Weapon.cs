@@ -396,7 +396,7 @@ namespace FromSoft_Game_Build_Planner
                 return null;
             
             weapon = Weapons[weapon.ID + infusion.Value];
-            if (weapon.WeaponType == DS1Weapon.Type.PyroFlame || weapon.WeaponType == DS1Weapon.Type.PyroFlameAscended)
+            if (weapon.WeaponType == Type.PyroFlame || weapon.WeaponType == Type.PyroFlameAscended)
                 weapon = Weapons[weapon.ID + (upgrade * 100)];
 
             return weapon;

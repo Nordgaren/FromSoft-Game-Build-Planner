@@ -153,5 +153,6 @@ namespace FromSoft_Game_Build_Planner
             contextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
             contextMenu.IsOpen = true;
         }
+
     }
 }

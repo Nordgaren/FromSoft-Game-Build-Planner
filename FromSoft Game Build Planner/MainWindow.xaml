@@ -14,17 +14,17 @@
 
     <Border Background="#1a1a1a"
             CornerRadius="10">
-        <Grid MouseDown="Grid_MouseDown">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="133*"/>
                 <ColumnDefinition Width="507*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="20" />
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid Background="#333333"
-                  Grid.ColumnSpan="2">
+                  Grid.ColumnSpan="2" MouseDown="Grid_MouseDown">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200" />
                     <ColumnDefinition />

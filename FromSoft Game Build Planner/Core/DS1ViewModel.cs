@@ -56,7 +56,6 @@ namespace FromSoft_Game_Build_Planner
         List<DS1Ring> Rings;
 
         //Weapon Upgrades
-        Dictionary<int, DS1ArmorUpgrade> ArmorUpgrades;
         Dictionary<string, TPF> Textures;
 
         private void Initialize(string exePath)
@@ -176,7 +175,7 @@ namespace FromSoft_Game_Build_Planner
                         DS1WeaponUpgrade.WeaponUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1WeaponUpgrade(x));
                         break;
                     case "REINFORCE_PARAM_PROTECTOR_ST":
-                        ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ;
+                        DS1ArmorUpgrade.ArmorUpgrades = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1ArmorUpgrade(x)); ;
                         break;
                     case "CACL_CORRECT_GRAPH_ST":
                         DS1CalcCorrect.CalcCorrectGraph = param.Rows.GroupBy(x => x.ID).Select(x => x.First()).ToDictionary(x => x.ID, x => new DS1CalcCorrect(x));
