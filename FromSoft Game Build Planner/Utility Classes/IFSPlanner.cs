@@ -15,5 +15,6 @@ namespace FromSoft_Game_Build_Planner
         void ResetCharacter();
         void SaveCharacter();
         void LoadCharacter();
+        void LoadLast();
     }
 }

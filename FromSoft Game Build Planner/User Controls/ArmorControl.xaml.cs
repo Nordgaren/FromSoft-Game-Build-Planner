@@ -44,8 +44,6 @@ namespace FromSoft_Game_Build_Planner
         public static readonly DependencyProperty ArmorProperty =
             DependencyProperty.Register("Armor", typeof(DS1Armor), typeof(ArmorControl), new PropertyMetadata(default(DS1Armor)));
 
-
-
         public int Upgrade
         {
             get { return (int)GetValue(UpgradeProperty); }
@@ -67,7 +65,7 @@ namespace FromSoft_Game_Build_Planner
 
         private void cmbArmor_Loaded(object sender, RoutedEventArgs e)
         {
-            cmbArmor.ItemsSource = ArmorList;
+              cmbArmor.ItemsSource = ArmorList;
             if (cmbArmor.SelectedIndex == -1)
                 cmbArmor.SelectedIndex = 0;
         }

@@ -591,7 +591,7 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _headUpgrade = value;
-                OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
@@ -617,7 +617,7 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _bodyUpgrade = value;
-                OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
@@ -643,7 +643,7 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _armsUpgrade = value;
-                OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }
@@ -669,7 +669,7 @@ namespace FromSoft_Game_Build_Planner
             set
             {
                 _legsUpgrade = value;
-                OnPropertyChanged(nameof(RHandDamage1));
+                OnPropertyChanged(nameof(EquipPercent));
                 OnPropertyChanged(nameof(DefenseModel));
                 OnPropertyChanged(nameof(SpecialDefenseModel));
             }

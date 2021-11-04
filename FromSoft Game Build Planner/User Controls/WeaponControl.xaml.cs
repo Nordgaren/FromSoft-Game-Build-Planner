@@ -33,15 +33,21 @@ namespace FromSoft_Game_Build_Planner
 
         public ICollectionView WeaponListCollectionView { get; private set; }
 
-        public string ControlName
+        public string SearchText
         {
-            get { return (string)GetValue(ControlNameProperty); }
-            set { SetValue(ControlNameProperty, value); }
+            get { return (string)GetValue(SearchTextProperty); }
+            set { SetValue(SearchTextProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for ControlName.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ControlNameProperty =
-            DependencyProperty.Register("ControlName", typeof(string), typeof(WeaponControl), new PropertyMetadata(""));
+        public static readonly DependencyProperty SearchTextProperty =
+            DependencyProperty.Register("SearchText", typeof(string), typeof(WeaponControl), new PropertyMetadata(Filter));
+
+        private static void Filter(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var wc = d as WeaponControl;
+
+            wc.WeaponListCollectionView.Refresh();
+        }
 
         public DS1DamageModel Damage
         {
@@ -206,16 +212,15 @@ namespace FromSoft_Game_Build_Planner
 
         private bool FilterWeapons(object obj)
         {
-            //if (cmbWeapon.IsDropDownOpen)
-            //{
-            //    if (obj is CategorizedItem item)
-            //        return item.Name.Contains(cmbWeapon.Text, StringComparison.InvariantCultureIgnoreCase) || item.Category.Contains(cmbWeapon.Text, StringComparison.InvariantCultureIgnoreCase);
+            if (cmbWeapon.IsDropDownOpen)
+            {
+                if (obj is CategorizedItem item)
+                    return item.Name.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase) || item.Category.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase);
 
-            //    return false;
-            //}
-            //else
-            //    return true;
-            return true;
+                return false;
+            }
+            else
+                return true;
         }
 
         private void cmbWeapon_TextChanged(object sender, TextChangedEventArgs e)

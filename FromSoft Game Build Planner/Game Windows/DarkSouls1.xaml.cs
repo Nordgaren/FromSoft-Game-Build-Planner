@@ -18,7 +18,6 @@ using Microsoft.Win32;
 using SharpDX.Direct3D9;
 using SF_Compatible_DRB_Icon_Appender;
 using SoulsFormats;
-using SharpDX.Direct3D9;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -57,10 +56,9 @@ namespace FromSoft_Game_Build_Planner
 
         public void Reload()
         {
-            //wcRH1.cmbWeapon.SelectedItem = ViewModel.Chr.RHandWeapon2;
             UserSettings.LocalUserSettings.LastDS1Character = ViewModel.Chr;
-            ViewModel = new DS1ViewModel();
-            LoadLastCharacter();
+            //ViewModel = new DS1ViewModel();
+            //LoadLastCharacter();
         }
 
         private void LoadLastCharacter()
@@ -147,6 +145,11 @@ namespace FromSoft_Game_Build_Planner
             var jsonString = File.ReadAllText(path);
 
             ViewModel.Chr = JsonConvert.DeserializeObject<DS1Character>(jsonString);
+            ReloadControls();
+        }
+
+        public void LoadLast()
+        {
             ReloadControls();
         }
     }

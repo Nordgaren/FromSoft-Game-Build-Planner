@@ -139,13 +139,15 @@ namespace FromSoft_Game_Build_Planner
             var planner = CurrentPlanner as IFSPlanner;
             planner.Reload();
 
-            //var result = StartPlanner(UserSettings.LocalUserSettings.LastExePath);
-            //if (!result)
-            //    Close();
+            var result = StartPlanner(UserSettings.LocalUserSettings.LastExePath);
+            if (!result)
+                Close();
 
-            //WindowTitle.Text = GameName;
-            //MainWindowContent.Content = CurrentPlanner;
-            //Initialize(ExePath);
+            WindowTitle.Text = GameName;
+            MainWindowContent.Content = CurrentPlanner;
+
+            planner.LoadLast();
+
         }
 
         private void SelectExe_Click(object sender, RoutedEventArgs e)
