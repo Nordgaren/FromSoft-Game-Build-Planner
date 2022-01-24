@@ -6,6 +6,7 @@
     <RootNamespace>FromSoft_Game_Build_Planner</RootNamespace>
     <UseWPF>true</UseWPF>
 	  <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+	  <Version>1.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
